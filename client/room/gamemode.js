@@ -1,11 +1,11 @@
 // настройки
 const WaitingPlayersTime = 2; // Ожидание игроков
-const BuildBaseTime = 0; // Время для строительства базы
-const KnivesModeTime = 0; // Время режима ножей
+const BuildBaseTime = 1; // Время для строительства базы
+const KnivesModeTime = 1; // Время режима ножей
 const GameModeTime = 3; // Время игры
-const MockModeTime = 0; // Время мокового режима
+const MockModeTime = 1; // Время мокового режима
 const EndOfMatchTime = 2; // Время окончания матча
-const VoteTime = 0; // Время голосования
+const VoteTime = 1; // Время голосования
 
 const KILL_SCORES = 5; // Очки за убийство
 const WINNER_SCORES = 10; // Очки за победу
