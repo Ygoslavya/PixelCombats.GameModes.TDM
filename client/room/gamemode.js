@@ -1,88 +1,101 @@
+import { DisplayValueHeader } from 'pixel_combats/basic';
+import { Game, Players, Inventory, LeaderBoard, BuildBlocksSet, Teams, Damage, BreackGraph, Ui, Properties, GameMode, Spawns, Timers, NewGame, NewGameVote } from 'pixel_combats/room';
+import * as teams from './default_teams.js';
+
 // настройки
-const WaitingPlayersTime = 2; // Ожидание игроков
-const BuildBaseTime = 1; // Время для строительства базы
-const KnivesModeTime = 1; // Время режима ножей
-const GameModeTime = 3; // Время игры
-const MockModeTime = 1; // Время мокового режима
-const EndOfMatchTime = 2; // Время окончания матча
-const VoteTime = 1; // Время голосования
-
+const GameDuration = 1; // Игра длится 1 секунда
 const KILL_SCORES = 5; // Очки за убийство
-const WINNER_SCORES = 10; // Очки за победу
-const TIMER_SCORES = 5; // Очки за время
-const SCORES_TIMER_INTERVAL = 30; // Интервал таймера очков
+const CHEST_SCORES = 10; // Очки за сундук
 
-// ... остальной код остается без изменений ...
+const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
+const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
 
-// при запросе смены команды игрока - добавляем его в запрашиваемую команду
-Teams.OnRequestJoinTeam.Add(function (player, team) {
-    if (team === null) {
-        // Автоматически распределяем игрока в команду
-        if (Math.random() < 0.5) {
-            blueTeam.Add(player);
-        } else {
-            redTeam.Add(player);
-        }
-        
-        // Устанавливаем начальные значения убийств и очков
-        player.Properties.Kills.Value = 10;
-        player.Properties.Scores.Value = 10;
-    }
-});
+// имена используемых объектов
+const GameStateValue = "Game";
+const EndOfMatchStateValue = "EndOfMatch";
 
-// ... остальной код остается без изменений ...
+// получаем объекты, с которыми работает режим
+const mainTimer = Timers.GetContext().Get("Main");
+const stateProp = Properties.GetContext().Get("State");
+
+// создаем стандартные команды
+const blueTeam = teams.create_team_blue();
+const redTeam = teams.create_team_red();
+
+// настраиваем параметры для лидерборда
+LeaderBoard.PlayerLeaderBoardValues = [
+    new DisplayValueHeader("Scores", "Statistics/Scores", "Statistics/ScoresShort"),
+    new DisplayValueHeader("Kills", "Statistics/Kills", "Statistics/KillsShort"),
+    new DisplayValueHeader("Deaths", "Statistics/Deaths", "Statistics/DeathsShort"),
+];
+
+// отображаем изначально нули в очках команд
+redTeam.Properties.Get("Scores").Value = 0;
+blueTeam.Properties.Get("Scores").Value = 0;
 
 // изначально задаем состояние ожидания других игроков
 SetWaitingMode();
 
 // состояния игры
 function SetWaitingMode() {
-    stateProp.Value = WaitingStateValue;
+    stateProp.Value = "Waiting";
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
-    Spawns.GetContext().enable = false;
-    mainTimer.Restart(WaitingPlayersTime); // Ожидание игроков теперь длится 2 секунды
+    mainTimer.Restart(3); // Время ожидания игроков перед началом игры
 }
-
-// ... остальной код остается без изменений ...
 
 function SetGameMode() {
-    Damage.GetContext().DamageOut.Value = true;
     stateProp.Value = GameStateValue;
-    Ui.GetContext().Hint.Value = "Hint/AttackEnemies";
+    Ui.GetContext().Hint.Value = "Hint/GameStarted";
 
-    var inventory = Inventory.GetContext();
-    if (GameMode.Parameters.GetBool("OnlyKnives")) {
-        inventory.Main.Value = false;
-        inventory.Secondary.Value = false;
-        inventory.Melee.Value = true;
-        inventory.Explosive.Value = false;
-        inventory.Build.Value = true;
-    } else {
-        inventory.Main.Value = true;
-        inventory.Secondary.Value = true;
-        inventory.Melee.Value = true;
-        inventory.Explosive.Value = true;
-        inventory.Build.Value = true;
+    // Автоматический спавн игроков и присвоение очков и убийств
+    for (const player of Players.All) {
+        player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
+        player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
+        player.Spawns.Spawn(); // Спавн игрока
     }
 
-    mainTimer.Restart(GameModeTime); // Игра теперь длится 3 секунды
-    Spawns.GetContext().Despawn();
-    SpawnTeams();
+    mainTimer.Restart(GameDuration); // Устанавливаем таймер на 1 секунду
 }
 
-// ... остальной код остается без изменений ...
+// Таймер переключения состояний
+mainTimer.OnTimer.Add(function () {
+    if (stateProp.Value === "Waiting") {
+        SetGameMode();
+    } else if (stateProp.Value === GameStateValue) {
+        SetEndOfMatch();
+    }
+});
 
-function SetEndOfMatch_EndMode() {
-    stateProp.Value = EndOfMatchStateValue;
-    scores_timer.Stop(); // выключаем таймер очков
+function SetEndOfMatch() {
     Ui.GetContext().Hint.Value = "Hint/EndOfMatch";
-
-    var spawns = Spawns.GetContext();
-    spawns.enable = false;
-    spawns.Despawn();
-
+    
+    // Завершение игры и отображение результатов
     Game.GameOver(LeaderBoard.GetTeams());
-    mainTimer.Restart(EndOfMatchTime); // Окончание матча теперь длится 2 секунды
+
+    // Перезапуск игры через 3 секунды после окончания матча
+    mainTimer.Restart(3); 
 }
 
-// ... остальной код остается без изменений ...
+// Таймер для перезапуска игры после окончания матча
+mainTimer.OnTimer.Add(function () {
+    if (stateProp.Value === EndOfMatchStateValue) {
+        ResetGame();
+        SetWaitingMode();
+    }
+});
+
+// Сброс состояния игры для нового раунда
+function ResetGame() {
+    redTeam.Properties.Get("Scores").Value = 0;
+    blueTeam.Properties.Get("Scores").Value = 0;
+
+    for (const player of Players.All) {
+        player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
+        player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
+        player.Spawns.Remove(); // Удалить игрока перед новым спавном (если необходимо)
+        player.Spawns.Spawn(); // Спавн игрока для нового раунда
+    }
+}
+
+// Начальная установка состояния игры
+SetWaitingMode();
