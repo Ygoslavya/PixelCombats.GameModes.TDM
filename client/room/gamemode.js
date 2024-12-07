@@ -314,4 +314,4 @@ function SpawnTeams() {
 	    Spawns.get.context(team).Spawn();  
 }
 
-// Запуск таймера начисления 
+// Запуск 
