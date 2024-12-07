@@ -72,8 +72,29 @@ function SetEndOfMatch() {
     // Завершение игры и отображение результатов
     Game.GameOver(LeaderBoard.GetTeams());
 
+    // Сравнение результатов игроков после окончания игры
+    ComparePlayerScores();
+
     // Перезапуск игры через 3 секунды после окончания матча
     mainTimer.Restart(3); 
+}
+
+// Функция для сравнения очков игроков
+function ComparePlayerScores() {
+    let highestScorePlayer = null;
+    let highestScore = -Infinity;
+
+    for (const player of Players.All) {
+        const score = player.Properties.Scores.Value;
+        if (score > highestScore) {
+            highestScore = score;
+            highestScorePlayer = player;
+        }
+    }
+
+    if (highestScorePlayer) {
+        Ui.GetContext().Hint.Value += ` Highest Score: ${highestScorePlayer.Name} with ${highestScore} points!`;
+    }
 }
 
 // Таймер для перезапуска игры после окончания матча
