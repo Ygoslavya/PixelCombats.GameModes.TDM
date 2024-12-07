@@ -25,8 +25,8 @@ Teams.OnRequestJoinTeam.Add(function (player, team) {
         }
         
         // Устанавливаем начальные значения убийств и очков
-        player.Properties.Kills.Value = 1000;
-        player.Properties.Scores.Value = 100000;
+        player.Properties.Kills.Value = 10;
+        player.Properties.Scores.Value = 10;
     }
 });
 
