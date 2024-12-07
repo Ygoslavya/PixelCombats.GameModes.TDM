@@ -80,8 +80,10 @@ Ui.GetContext().TeamProp1.Value = { Team: "Blue", Prop: SCORES_PROP_NAME };
 Ui.GetContext().TeamProp2.Value = { Team: "Red", Prop: SCORES_PROP_NAME };
 
 // при запросе смены команды игрока - добавляем его в запрашиваемую команду и спавним его
-Teams.OnRequestJoinTeam.Add(function (player, team) {
-    team.Add(player);
+Teams.OnRequestJoinTeam.Add(function (player) {
+    // Автоматически назначаем игрока в случайную команду (синюю или красную)
+    const selectedTeam = Math.random() < 0.5 ? blueTeam : redTeam; // 50% шанс на каждую команду
+    selectedTeam.Add(player);
     player.Spawns.Spawn(); // Автоматический спавн игрока при присоединении к команде
 });
 
