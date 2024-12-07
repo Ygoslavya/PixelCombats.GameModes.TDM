@@ -41,6 +41,12 @@ function SetWaitingMode() {
     stateProp.Value = "Waiting";
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
     mainTimer.Restart(3); // Время ожидания игроков перед началом игры
+
+    // Предложение игрокам выбрать команду
+    for (const player of Players.All) {
+        player.Properties.TeamChoice.Value = null; // Сброс выбора команды перед новым раундом
+        Ui.GetContext().Hint.Value += ` ${player.Name}, выберите команду: красная или синяя.`;
+    }
 }
 
 function SetGameMode() {
@@ -49,6 +55,15 @@ function SetGameMode() {
 
     // Автоматический спавн игроков и присвоение очков и убийств
     for (const player of Players.All) {
+        if (player.Properties.TeamChoice.Value === 'Blue') {
+            blueTeam.AddPlayer(player);
+        } else if (player.Properties.TeamChoice.Value === 'Red') {
+            redTeam.AddPlayer(player);
+        } else {
+            // Если команда не выбрана, назначаем игрока в синюю команду по умолчанию
+            blueTeam.AddPlayer(player);
+        }
+        
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
         player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
         player.Spawns.Spawn(); // Спавн игрока
@@ -72,8 +87,8 @@ function SetEndOfMatch() {
     // Завершение игры и отображение результатов
     Game.GameOver(LeaderBoard.GetTeams());
 
-    // Перезапуск игры через 3 секунды после окончания матча
-    mainTimer.Restart(3); 
+    // Перезапуск игры через 2 секунды после окончания матча
+    mainTimer.Restart(2); 
 }
 
 // Таймер для перезапуска игры после окончания матча
@@ -92,7 +107,7 @@ function ResetGame() {
     for (const player of Players.All) {
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
         player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
-        
+
         // Удаляем игрока перед новым спавном (если необходимо)
         player.Spawns.Remove(); 
         player.Spawns.Spawn(); // Спавн игрока для нового раунда
