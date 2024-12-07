@@ -314,5 +314,4 @@ function SpawnTeams() {
 	    Spawns.get.context(team).Spawn();  
 }
 
-// Запуск таймера начисления очков за время игры.
-scores_timer.RestartLoop(SCORES_TIMER_INTERVAL);
+// Запуск таймера начисления 
