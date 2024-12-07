@@ -3,9 +3,9 @@ import { Game, Players, Inventory, LeaderBoard, BuildBlocksSet, Teams, Damage, B
 import * as teams from './default_teams.js';
 
 // настройки
-const GameDuration = 1; // Игра длится 1 секунду
-const KILL_SCORES = 5; // Очки за убийство (можно оставить как есть)
-const CHEST_SCORES = 10; // Очки за сундук (если нужно)
+const GameDuration = 1; // Игра длится 1 секунда
+const KILL_SCORES = 5; // Очки за убийство
+const CHEST_SCORES = 10; // Очки за сундук
 
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
@@ -71,14 +71,31 @@ function SetEndOfMatch() {
     
     // Завершение игры и отображение результатов
     Game.GameOver(LeaderBoard.GetTeams());
+
+    // Перезапуск игры через 3 секунды после окончания матча
+    mainTimer.Restart(3); 
 }
 
-// Запускаем игру после ожидания игроков
+// Таймер для перезапуска игры после окончания матча
 mainTimer.OnTimer.Add(function () {
-    if (stateProp.Value === "Waiting") {
-        SetGameMode();
+    if (stateProp.Value === EndOfMatchStateValue) {
+        ResetGame();
+        SetWaitingMode();
     }
 });
+
+// Сброс состояния игры для нового раунда
+function ResetGame() {
+    redTeam.Properties.Get("Scores").Value = 0;
+    blueTeam.Properties.Get("Scores").Value = 0;
+
+    for (const player of Players.All) {
+        player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
+        player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
+        player.Spawns.Remove(); // Удалить игрока перед новым спавном (если необходимо)
+        player.Spawns.Spawn(); // Спавн игрока для нового раунда
+    }
+}
 
 // Начальная установка состояния игры
 SetWaitingMode();
