@@ -52,23 +52,12 @@ function SetGameMode() {
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
         player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
         player.Spawns.Spawn(); // Спавн игрока
-        AssignPlayerToTeam(player); // Присвоение игрока к команде
     }
 
     mainTimer.Restart(GameDuration); // Устанавливаем таймер на 1 секунду
 }
 
-// Присвоение игрока к команде
-function AssignPlayerToTeam(player) {
-    const teamChoice = player.Properties.TeamChoice.Value; // Получаем выбор команды игрока (например: 'Blue' или 'Red')
-    
-    if (teamChoice === 'Blue') {
-        blueTeam.AddPlayer(player);
-    } else if (teamChoice === 'Red') {
-        redTeam.AddPlayer(player);
-    }
-}
-
+// Таймер переключения состояний
 mainTimer.OnTimer.Add(function () {
     if (stateProp.Value === "Waiting") {
         SetGameMode();
@@ -103,9 +92,12 @@ function ResetGame() {
     for (const player of Players.All) {
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
         player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
-        player.Properties.TeamChoice.Value = null; // Сброс выбора команды для следующего раунда
+        
+        // Удаляем игрока перед новым спавном (если необходимо)
+        player.Spawns.Remove(); 
+        player.Spawns.Spawn(); // Спавн игрока для нового раунда
     }
-});
+}
 
 // Начальная установка состояния игры
 SetWaitingMode();
