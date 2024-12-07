@@ -79,10 +79,11 @@ blueTeam.Properties.Get(SCORES_PROP_NAME).Value = 0;
 Ui.GetContext().TeamProp1.Value = { Team: "Blue", Prop: SCORES_PROP_NAME };
 Ui.GetContext().TeamProp2.Value = { Team: "Red", Prop: SCORES_PROP_NAME };
 
-// при запросе смены команды игрока - добавляем его в запрашиваемую команду
-Teams.OnRequestJoinTeam.Add(function (player, team) { team.Add(player); });
-// при запросе спавна игрока - спавним его
-Teams.OnPlayerChangeTeam.Add(function (player) { player.Spawns.Spawn(); });
+// при запросе смены команды игрока - добавляем его в запрашиваемую команду и спавним его
+Teams.OnRequestJoinTeam.Add(function (player, team) {
+    team.Add(player);
+    player.Spawns.Spawn(); // Автоматический спавн игрока при присоединении к команде
+});
 
 // бессмертие после респавна
 Spawns.GetContext().OnSpawn.Add(function (player) {
@@ -167,7 +168,7 @@ SetWaitingMode();
 function SetWaitingMode() {
 	stateProp.Value = WaitingStateValue;
 	Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
-	Spawns.GetContext().enable = false;
+	Spawns.GetContext().enable = false; // Отключаем спавн во время ожидания игроков
 	mainTimer.Restart(WaitingPlayersTime);
 }
 
@@ -185,8 +186,8 @@ function SetBuildMode() {
 	Damage.GetContext().DamageOut.Value = false;
 
 	mainTimer.Restart(BuildBaseTime);
-	Spawns.GetContext().enable = true;
-	SpawnTeams();
+	Spawns.GetContext().enable = true; // Включаем спавн во время режима постройки
+	SpawnTeams(); // Спавним команды автоматически при переходе в режим постройки
 }
 
 function SetKnivesMode() {
@@ -203,8 +204,8 @@ function SetKnivesMode() {
 	Damage.GetContext().DamageOut.Value = true;
 
 	mainTimer.Restart(KnivesModeTime);
-	Spawns.GetContext().enable = true;
-	SpawnTeams();
+	Spawns.GetContext().enable = true; // Включаем спавн во время режима ножей
+	SpawnTeams(); // Спавним команды автоматически при переходе в режим ножей
 }
 
 function SetGameMode() {
@@ -229,8 +230,8 @@ function SetGameMode() {
     }
 
 	mainTimer.Restart(GameModeTime);
-    Spawns.GetContext().Despawn(); 
-    SpawnTeams(); 
+    Spawns.GetContext().Despawn(); // Убираем старых игроков перед началом новой игры.
+    SpawnTeams(); // Спавним команды автоматически перед началом игры.
 }
 
 function SetEndOfMatch() {
@@ -311,4 +312,5 @@ function SpawnTeams() {
 	    Spawns.get.context(team).Spawn();  
 }
 
+// Запуск таймера начисления очков за время игры.
 scores_timer.RestartLoop(SCORES_TIMER_INTERVAL);
