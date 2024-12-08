@@ -6,6 +6,7 @@ import * as teams from './default_teams.js';
 const GameDuration = 1; // Игра длится 1 секунда
 const KILL_SCORES = 5; // Очки за убийство
 const CHEST_SCORES = 10; // Очки за сундук
+const EndOfMatchTime = 3; // Время до перезапуска игры после окончания матча
 
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
@@ -63,9 +64,6 @@ mainTimer.OnTimer.Add(function () {
         SetGameMode();
     } else if (stateProp.Value === GameStateValue) {
         SetEndOfMatch();
-    } else if (stateProp.Value === EndOfMatchStateValue) {
-        ResetGame();
-        SetWaitingMode();
     }
 });
 
@@ -78,8 +76,8 @@ function SetEndOfMatch() {
     // Сравнение результатов игроков после окончания игры
     ComparePlayerScores();
 
-    // Перезапуск игры через 3 секунды после окончания матча
-    mainTimer.Restart(3); 
+    // Перезапуск игры через EndOfMatchTime секунд после окончания матча
+    mainTimer.Restart(EndOfMatchTime); 
 }
 
 // Функция для сравнения очков игроков
@@ -100,6 +98,14 @@ function ComparePlayerScores() {
     }
 }
 
+// Таймер для перезапуска игры после окончания матча
+mainTimer.OnTimer.Add(function () {
+    if (stateProp.Value === EndOfMatchStateValue) {
+        ResetGame();
+        SetWaitingMode();
+    }
+});
+
 // Сброс состояния игры для нового раунда
 function ResetGame() {
     redTeam.Properties.Get("Scores").Value = 0;
@@ -115,17 +121,3 @@ function ResetGame() {
 
 // Начальная установка состояния игры
 SetWaitingMode();
-
-// Добавление функции для голосования на новый матч из второго кода.
-function OnVoteResult(v) {
-	if (v.Result === null) return;
-	NewGame.RestartGame(v.Result);
-}
-NewGameVote.OnResult.Add(OnVoteResult); // Подписка на результаты голосования
-
-function start_vote() {
-	NewGameVote.Start({
-		Variants: [{ MapId: 0 }],
-		Timer: VoteTime,
-	}, MapRotation ? 3 : 0);
-}
