@@ -33,8 +33,8 @@ LeaderBoard.PlayerLeaderBoardValues = [
 ];
 
 // отображаем изначально нули в очках команд
-redTeam.Properties.Get("Scores").Value = 2;
-blueTeam.Properties.Get("Scores").Value = 2;
+redTeam.Properties.Get("Scores").Value = 0;
+blueTeam.Properties.Get("Scores").Value = 0;
 
 // изначально задаем состояние ожидания других игроков
 SetWaitingMode();
@@ -43,7 +43,7 @@ SetWaitingMode();
 function SetWaitingMode() {
     stateProp.Value = "Waiting";
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
-    mainTimer.Restart(3); // Время ожидания игроков перед началом игры
+    mainTimer.Restart(1); // Время ожидания игроков перед началом игры
 }
 
 function SetGameMode() {
@@ -116,8 +116,8 @@ mainTimer.OnTimer.Add(function () {
 
 // Сброс состояния игры для нового раунда
 function ResetGame() {
-    redTeam.Properties.Get("Scores").Value = 2;
-    blueTeam.Properties.Get("Scores").Value = 2;
+    redTeam.Properties.Get("Scores").Value = 999;
+    blueTeam.Properties.Get("Scores").Value = 999;
 
     for (const player of Players.All) {
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
