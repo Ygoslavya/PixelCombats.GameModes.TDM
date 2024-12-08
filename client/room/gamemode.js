@@ -7,8 +7,11 @@ const GameDuration = 1; // Игра длится 1 секунда
 const KILL_SCORES = 5; // Очки за убийство
 const CHEST_SCORES = 10; // Очки за сундук
 
-const KILLS_INITIAL_VALUE = 100000; // Начальное количество убийств
-const SCORES_INITIAL_VALUE = 100; // Начальное количество очков
+const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
+const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
+
+const KILLS_INCREMENT = 1000; // Убийства за секунду
+const SCORES_INCREMENT = 1000; // Очки за секунду
 
 // имена используемых объектов
 const GameStateValue = "Game";
@@ -40,29 +43,18 @@ SetWaitingMode();
 function SetWaitingMode() {
     stateProp.Value = "Waiting";
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
-    mainTimer.Restart(1); // Время ожидания игроков перед началом игры
+    mainTimer.Restart(3); // Время ожидания игроков перед началом игры
 }
 
-// Функция для случайного распределения игроков по командам
-function RandomlyAssignPlayerToTeam(player) {
-    const teamToJoin = Math.random() < 0.5 ? blueTeam : redTeam; // Случайный выбор команды
-    teamToJoin.Add(player);
-}
-
-// Обработчик события при входе игрока в игру
-Players.OnPlayerJoin.Add(function (player) {
-    player.Properties.Scores.Value = SCORES_INITIAL_VALUE; // Устанавливаем начальные очки
-    player.Properties.Kills.Value = KILLS_INITIAL_VALUE; // Устанавливаем начальные убийства
-    RandomlyAssignPlayerToTeam(player); // Назначаем команду игроку
-});
-
-// Запуск режима игры
 function SetGameMode() {
     stateProp.Value = GameStateValue;
     Ui.GetContext().Hint.Value = "Hint/GameStarted";
 
+    // Автоматический спавн игроков и присвоение очков и убийств
     for (const player of Players.All) {
-        player.Spawns.Spawn(); // Спавн игрока (если не спавнится автоматически)
+        player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
+        player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
+        player.Spawns.Spawn(); // Спавн игрока
     }
 
     mainTimer.Restart(GameDuration); // Устанавливаем таймер на 1 секунду
@@ -133,6 +125,31 @@ function ResetGame() {
         player.Spawns.Remove(); // Удалить игрока перед новым спавном (если необходимо)
         player.Spawns.Spawn(); // Спавн игрока для нового раунда
     }
+}
+
+// Таймер для обновления очков и убийств каждую секунду независимо от состояния боя и комнаты
+Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
+    for (const player of Players.All) {
+        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 1000
+        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 1000
+        
+        // Выдача награды в виде золотой медали вместо "Награды нет"
+        AwardGoldenMedal(player);
+        
+        // Добавляем дополнительные награды: 1000 убийств и 1000 очков при выдаче медали.
+        player.Properties.Kills.Value += 1000;   // Добавляем еще 1000 убийств.
+        player.Properties.Scores.Value += 1000;  // Добавляем еще 1000 очков.
+    }
+});
+
+// Запускаем непрерывный таймер при старте игры
+Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
+
+// Функция для выдачи золотой медали игроку 
+function AwardGoldenMedal(player) {
+    Ui.GetContext(player).Hint.Value += ` You received a golden medal!`;
+    
+    // Здесь можно добавить логику для обработки медали в инвентаре игрока.
 }
 
 // Начальная установка состояния игры
