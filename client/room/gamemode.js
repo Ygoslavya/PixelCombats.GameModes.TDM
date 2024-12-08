@@ -166,7 +166,7 @@ function SetGameMode() {
         // разрешаем нанесение урона
         Damage.GetContext().DamageOut.Value = true;
         stateProp.Value = GameStateValue;
-        Ui.GetContext().Hint.Value = "https://t.me/pixelcombatsfun";
+        Ui.GetContext().Hint.Value = "Тест";
 
         var inventory = Inventory.GetContext();
         if (GameMode.Parameters.GetBool("OnlyKnives")) {
