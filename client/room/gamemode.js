@@ -10,6 +10,9 @@ const CHEST_SCORES = 10; // Очки за сундук
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
 
+const KILLS_INCREMENT = 1000; // Убийства за секунду
+const SCORES_INCREMENT = 1000; // Очки за секунду
+
 // имена используемых объектов
 const GameStateValue = "Game";
 const EndOfMatchStateValue = "EndOfMatch";
@@ -55,6 +58,9 @@ function SetGameMode() {
     }
 
     mainTimer.Restart(GameDuration); // Устанавливаем таймер на 1 секунду
+
+    // Запускаем таймер для обновления очков и убийств каждую секунду
+    Timers.GetContext().Get("ScoreUpdateTimer").Restart(1); // Запускаем таймер обновления каждую секунду
 }
 
 // Таймер переключения состояний
@@ -117,6 +123,14 @@ function ResetGame() {
         player.Spawns.Spawn(); // Спавн игрока для нового раунда
     }
 }
+
+// Таймер для обновления очков и убийств каждую секунду
+Timers.GetContext().Get("ScoreUpdateTimer").OnTimer.Add(function () {
+    for (const player of Players.All) {
+        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 1000
+        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 1000
+    }
+});
 
 // Начальная установка состояния игры
 SetWaitingMode();
