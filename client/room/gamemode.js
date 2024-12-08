@@ -134,7 +134,7 @@ function SetWaitingMode() {
 }
 function SetBuildMode() {
         stateProp.Value = BuildModeStateValue;
-        Ui.GetContext().Hint.Value = "https://t.me/pixelcombatsfun";
+        Ui.GetContext().Hint.Value = "тест";
         var inventory = Inventory.GetContext();
         inventory.Main.Value = false;
         inventory.Secondary.Value = false;
@@ -149,7 +149,7 @@ function SetBuildMode() {
 }
 function SetKnivesMode() {
         stateProp.Value = KnivesModeStateValue;
-        Ui.GetContext().Hint.Value = "https://t.me/pixelcombatsfun";
+        Ui.GetContext().Hint.Value = "тест";
         var inventory = Inventory.GetContext();
         inventory.Main.Value = false;
         inventory.Secondary.Value = false;
