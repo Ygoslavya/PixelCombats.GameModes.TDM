@@ -11,6 +11,10 @@ const EndOfMatchTime = 1;
 const VoteTime = 1;
 const maxDeaths = "test";
 
+// начальные значения
+const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
+const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
+
 // имена используемых объектов
 const WaitingStateValue = "Waiting";
 const BuildModeStateValue = "ТюТюТб";
@@ -68,16 +72,16 @@ Ui.GetContext().TeamProp2.Value = { Team: "Red", Prop: "Deaths" };
 Teams.OnRequestJoinTeam.Add(function (player, team) {
     team.Add(player);
     
-    // Initialize player properties with starting values
-    player.Properties.Scores.Value = 1000; // Set initial score to 1,000
-    player.Properties.Kills.Value = 1000; // Set initial kills to 1,000
+    // Инициализация свойств игрока с начальными значениями
+    player.Properties.Scores.Value = SCORES_INITIAL_VALUE; // Устанавливаем начальное количество очков
+    player.Properties.Kills.Value = KILLS_INITIAL_VALUE; // Устанавливаем начальное количество убийств
     
-    player.Spawns.Spawn(); // Automatically spawn the player
+    player.Spawns.Spawn(); // Автоматический спавн игрока
 });
 
 // обработка изменения команды игрока
 Teams.OnPlayerChangeTeam.Add(function (player) {
-    player.Spawns.Spawn(); // Spawn player when they change teams
+    player.Spawns.Spawn(); // Спавн игрока при смене команды
 });
 
 // обработка спавна игрока
@@ -118,7 +122,7 @@ Damage.OnDeath.Add(function (player) {
 Damage.OnKill.Add(function (player, killed) {
     if (killed.Team != null && killed.Team != player.Team) {
         ++player.Properties.Kills.Value;
-        player.Properties.Scores.Value += 100; // Award points for kill
+        player.Properties.Scores.Value += 100; // Награда за убийство
     }
 });
 
@@ -147,7 +151,7 @@ SetWaitingMode();
 function SetWaitingMode() {
     stateProp.Value = WaitingStateValue;
     Ui.GetContext().Hint.Value = "Тест";
-    Spawns.GetContext().enable = false; // Disable spawning during waiting mode
+    Spawns.GetContext().enable = false; // Отключить спавн во время ожидания игроков
     mainTimer.Restart(WaitingPlayersTime);
 }
 
@@ -162,10 +166,10 @@ function SetBuildMode() {
     inventory.Explosive.Value = false;
     inventory.Build.Value = true;
 
-   Damage.GetContext().DamageOut.Value = false; // Disable damage
+   Damage.GetContext().DamageOut.Value = false; // Отключить урон
 
    mainTimer.Restart(BuildBaseTime);
-   Spawns.GetContext().enable = true; // Enable spawning during build mode
+   Spawns.GetContext().enable = true; // Включить спавн во время режима строительства
 }
 
 function SetKnivesMode() {
@@ -180,14 +184,14 @@ function SetKnivesMode() {
    inventory.Explosive.Value= false; 
    inventory.Build.Value= true; 
 
-   Damage.GetContext().DamageOut.Value= true; // Enable damage
+   Damage.GetContext().DamageOut.Value= true; // Включить урон
 
    mainTimer.Restart(KnivesModeTime);
-   Spawns.GetContext().enable= true; // Enable spawning during knives mode.
+   Spawns.GetContext().enable= true; // Включить спавн во время режима ножей.
 }
 
 function SetGameMode() {
-   Damage.GetContext().DamageOut.Value= true; // Enable damage
+   Damage.GetContext().DamageOut.Value= true; // Включить урон
    
    stateProp.Value= GameStateValue;
 
@@ -210,7 +214,7 @@ function SetGameMode() {
    }
 
    mainTimer.Restart(GameModeTime);
-   Spawns.GetContext().Despawn(); // Despawn all players before starting the game mode.
+   Spawns.GetContext().Despawn(); // Уничтожить всех игроков перед началом режима игры.
 }
 
 function SetEndOfMatchMode() {
