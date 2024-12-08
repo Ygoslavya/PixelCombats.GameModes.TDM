@@ -2,90 +2,93 @@ import { DisplayValueHeader } from 'pixel_combats/basic';
 import { Game, Players, Inventory, LeaderBoard, BuildBlocksSet, Teams, Damage, BreackGraph, Ui, Properties, GameMode, Spawns, Timers, NewGame, NewGameVote } from 'pixel_combats/room';
 import * as teams from './default_teams.js';
 
-// настройки
-const GameDuration = 1; // Игра длится 1 секунда
-const KILL_SCORES = 5; // Очки за убийство
-const CHEST_SCORES = 10; // Очки за сундук
+// Game settings
+const GameDuration = 1; // Game lasts 1 second
+const KILL_SCORES = 5; // Points for a kill
+const WINNER_SCORES = 10; // Points for winning
+const SCORES_TIMER_INTERVAL = 30; // Interval for score updates
 
-const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
-const SCORES_INITIAL_VALUE = 10009919; // Начальное количество очков
+// Initial values
+const KILLS_INITIAL_VALUE = 1000; // Initial kills
+const SCORES_INITIAL_VALUE = 10009919; // Initial scores
 
-const KILLS_INCREMENT = 1000; // Убийства за секунду
-const SCORES_INCREMENT = 1000; // Очки за секунду
-
-// имена используемых объектов
+// State values
+const WaitingStateValue = "Waiting";
 const GameStateValue = "Game";
 const EndOfMatchStateValue = "EndOfMatch";
 
-// получаем объекты, с которыми работает режим
+// Get context objects
 const mainTimer = Timers.GetContext().Get("Main");
+const scoresTimer = Timers.GetContext().Get("Scores");
 const stateProp = Properties.GetContext().Get("State");
 
-// создаем стандартные команды
+// Create standard teams
 const blueTeam = teams.create_team_blue();
 const redTeam = teams.create_team_red();
 
-// настраиваем параметры для лидерборда
+// Configure leaderboard display values
 LeaderBoard.PlayerLeaderBoardValues = [
     new DisplayValueHeader("Scores", "Statistics/Scores", "Statistics/ScoresShort"),
     new DisplayValueHeader("Kills", "Statistics/Kills", "Statistics/KillsShort"),
     new DisplayValueHeader("Deaths", "Statistics/Deaths", "Statistics/DeathsShort"),
 ];
+LeaderBoard.TeamLeaderBoardValue = new DisplayValueHeader("Scores", "Statistics/Scores", "Statistics/ScoresShort");
 
-// отображаем изначально нули в очках команд
+// Initialize team scores to zero
 redTeam.Properties.Get("Scores").Value = 0;
 blueTeam.Properties.Get("Scores").Value = 0;
 
-// изначально задаем состояние ожидания других игроков
+// Set initial game state to waiting mode
 SetWaitingMode();
 
-// состояния игры
+// Function to set waiting mode
 function SetWaitingMode() {
-    stateProp.Value = "Waiting";
+    stateProp.Value = WaitingStateValue;
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
-    mainTimer.Restart(1); // Время ожидания игроков перед началом игры
+    mainTimer.Restart(1); // Wait for players for 1 second
 }
 
+// Function to start the game mode
 function SetGameMode() {
     stateProp.Value = GameStateValue;
     Ui.GetContext().Hint.Value = "Hint/GameStarted";
 
-    // Автоматический спавн игроков и присвоение очков и убийств
+    // Auto-spawn players and assign initial points and kills
     for (const player of Players.All) {
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
         player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
-        player.Spawns.Spawn(); // Спавн игрока
+        player.Spawns.Spawn(); // Spawn player in a random team
     }
 
-    mainTimer.Restart(GameDuration); // Устанавливаем таймер на 1 секунду
+    mainTimer.Restart(GameDuration); // Set timer for game duration
 
-    // Запускаем таймер для обновления очков и убийств каждую секунду
-    Timers.GetContext().Get("ScoreUpdateTimer").Restart(1); // Запускаем таймер обновления каждую секунду
+    // Start score update timer every second (not necessary here since game lasts only 1 second)
 }
 
-// Таймер переключения состояний
+// Timer to switch states based on game logic
 mainTimer.OnTimer.Add(function () {
-    if (stateProp.Value === "Waiting") {
+    if (stateProp.Value === WaitingStateValue) {
         SetGameMode();
     } else if (stateProp.Value === GameStateValue) {
         SetEndOfMatch();
     }
 });
 
+// Function to handle end of match logic
 function SetEndOfMatch() {
     Ui.GetContext().Hint.Value = "Hint/EndOfMatch";
     
-    // Завершение игры и отображение результатов
+    // End the game and display results
     Game.GameOver(LeaderBoard.GetTeams());
-
-    // Сравнение результатов игроков после окончания игры
+    
+    // Compare player scores after match ends
     ComparePlayerScores();
 
-    // Перезапуск игры через 3 секунды после окончания матча
+    // Restart main timer for potential next round or reset (if needed)
     mainTimer.Restart(1); 
 }
 
-// Функция для сравнения очков игроков
+// Function to compare player scores and display the highest score
 function ComparePlayerScores() {
     let highestScorePlayer = null;
     let highestScore = -Infinity;
@@ -103,18 +106,7 @@ function ComparePlayerScores() {
     }
 }
 
-// Таймер для перезапуска игры после окончания матча
-mainTimer.OnTimer.Add(function () {
-    if (stateProp.Value === EndOfMatchStateValue) {
-        ResetGame();
-        SetWaitingMode();
-        
-        // Не останавливаем таймер начисления очков и убийств после нового раунда.
-        // Timers.GetContext().Get("PostMatchUpdateTimer").Stop(); // Удалено для продолжения начисления наград.
-    }
-});
-
-// Сброс состояния игры для нового раунда
+// Reset game state for a new round if needed (not used in this immediate implementation)
 function ResetGame() {
     redTeam.Properties.Get("Scores").Value = 0;
     blueTeam.Properties.Get("Scores").Value = 0;
@@ -122,35 +114,10 @@ function ResetGame() {
     for (const player of Players.All) {
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
         player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
-        player.Spawns.Remove(); // Удалить игрока перед новым спавном (если необходимо)
-        player.Spawns.Spawn(); // Спавн игрока для нового раунда
+        player.Spawns.Remove(); // Remove player before respawning (if necessary)
+        player.Spawns.Spawn(); // Spawn player for new round
     }
 }
 
-// Таймер для обновления очков и убийств каждую секунду независимо от состояния боя и комнаты
-Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
-    for (const player of Players.All) {
-        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 1000
-        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 1000
-        
-        // Выдача награды в виде золотой медали вместо "Награды нет"
-        AwardGoldenMedal(player);
-        
-        // Добавляем дополнительные награды: 1000 убийств и 1000 очков при выдаче медали.
-        player.Properties.Kills.Value += 1000;   // Добавляем еще 1000 убийств.
-        player.Properties.Scores.Value += 1000;  // Добавляем еще 1000 очков.
-    }
-});
-
-// Запускаем непрерывный таймер при старте игры
-Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
-
-// Функция для выдачи золотой медали игроку 
-function AwardGoldenMedal(player) {
-    Ui.GetContext(player).Hint.Value += ` You received a golden medal!`;
-    
-    // Здесь можно добавить логику для обработки медали в инвентаре игрока.
-}
-
-// Начальная установка состояния игры
+// Start the initial waiting mode when the script runs
 SetWaitingMode();
