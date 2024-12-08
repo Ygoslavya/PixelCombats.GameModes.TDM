@@ -122,4 +122,15 @@ function ResetGame() {
 }
 
 // Начальная установка состояния игры
-SetWaitingMode();
+SetWaitingMode(); function ResetGame() {
+    redTeam.Properties.Get("Scores").Value = 0; // Сброс очков команды
+    blueTeam.Properties.Get("Scores").Value = 0;
+
+    for (const player of Players.All) {
+        player.Properties.Scores.Value = SCORES_INITIAL_VALUE; // Сброс очков игроков
+        player.Properties.Kills.Value = KILLS_INITIAL_VALUE; // Сброс убийств
+        player.Properties.Deaths.Value = 0; // Сброс смертей
+        player.Spawns.Remove(); // Удаление старого спавна
+        player.Spawns.Spawn(); // Новый спавн
+    }
+}
