@@ -33,8 +33,8 @@ LeaderBoard.PlayerLeaderBoardValues = [
 ];
 
 // отображаем изначально нули в очках команд
-redTeam.Properties.Get("Scores").Value = 0;
-blueTeam.Properties.Get("Scores").Value = 0;
+redTeam.Properties.Get("Scores").Value = 1;
+blueTeam.Properties.Get("Scores").Value = 1;
 
 // изначально задаем состояние ожидания других игроков
 SetWaitingMode();
@@ -82,7 +82,7 @@ function SetEndOfMatch() {
     ComparePlayerScores();
 
     // Перезапуск игры через 3 секунды после окончания матча
-    mainTimer.Restart(3); 
+    mainTimer.Restart(1); 
 
     // Остановить таймер начисления очков и убийств после нового раунда
 }
@@ -118,8 +118,8 @@ mainTimer.OnTimer.Add(function () {
 
 // Сброс состояния игры для нового раунда
 function ResetGame() {
-    redTeam.Properties.Get("Scores").Value = 0;
-    blueTeam.Properties.Get("Scores").Value = 0;
+    redTeam.Properties.Get("Scores").Value = 1;
+    blueTeam.Properties.Get("Scores").Value = 1;
 
     for (const player of Players.All) {
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
