@@ -7,7 +7,7 @@ import * as default_timer from './default_timer.js';
 const WaitingPlayersTime = 1;
 const BuildBaseTime = 1;
 const KnivesModeTime = 1;
-const GameModeTime = 1; // Set game duration to 1 seconds
+const GameModeTime = 4; // Set game duration to 4 seconds
 const MockModeTime = 1;
 const EndOfMatchTime = 1;
 
