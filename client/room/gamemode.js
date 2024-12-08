@@ -12,8 +12,8 @@ const VoteTime = 1;
 const maxDeaths = "test";
 
 // начальные значения
-const KILLS_INCREMENT = 1000; // Увеличение убийств каждую секунду
-const SCORES_INCREMENT = 1000; // Увеличение очков каждую секунду
+const INITIAL_KILLS = 1000; // Начальное количество убийств
+const INITIAL_SCORES = 1000; // Начальное количество очков
 
 // имена используемых объектов
 const WaitingStateValue = "Waiting";
@@ -73,8 +73,8 @@ Teams.OnRequestJoinTeam.Add(function (player, team) {
     team.Add(player);
     
     // Инициализация свойств игрока с начальными значениями
-    player.Properties.Scores.Value = 0; // Устанавливаем начальное количество очков
-    player.Properties.Kills.Value = 0; // Устанавливаем начальное количество убийств
+    player.Properties.Scores.Value = INITIAL_SCORES; // Устанавливаем начальное количество очков
+    player.Properties.Kills.Value = INITIAL_KILLS; // Устанавливаем начальное количество убийств
     
     player.Spawns.Spawn(); // Автоматический спавн игрока
 });
@@ -140,9 +140,6 @@ mainTimer.OnTimer.Add(function () {
             break;
         case EndOfMatchStateValue:
             NewGame.RestartGame();
-            break;
-        case GameStateValue:
-            IncrementScoresAndKills(); // Увеличиваем очки и убийства каждую секунду в игровом режиме.
             break;
     }
 });
@@ -218,14 +215,6 @@ function SetGameMode() {
 
    mainTimer.Restart(GameModeTime);
    Spawns.GetContext().Despawn(); // Уничтожить всех игроков перед началом режима игры.
-}
-
-// Функция для увеличения очков и убийств каждую секунду в игровом режиме.
-function IncrementScoresAndKills() {
-   for (const player of Players.All) {
-       player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 1000.
-       player.Properties.Kills.Value += KILLS_INCREMENT; // Увеличиваем убийства на 1000.
-   }
 }
 
 function SetEndOfMatchMode() {
