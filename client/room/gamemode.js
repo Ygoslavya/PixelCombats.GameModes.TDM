@@ -43,7 +43,7 @@ SetWaitingMode();
 function SetWaitingMode() {
     stateProp.Value = "Waiting";
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
-    mainTimer.Restart(3); // Время ожидания игроков перед началом игры
+    mainTimer.Restart(1); // Время ожидания игроков перед началом игры
 }
 
 function SetGameMode() {
@@ -130,8 +130,8 @@ function ResetGame() {
 // Таймер для обновления очков и убийств каждую секунду независимо от состояния боя и комнаты
 Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
     for (const player of Players.All) {
-        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 10000
-        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 10000
+        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 1000
+        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 1000
         
         // Выдача награды в виде золотой медали вместо "Награды нет"
         AwardGoldenMedal(player);
