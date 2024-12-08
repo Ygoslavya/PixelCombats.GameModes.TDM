@@ -33,8 +33,8 @@ LeaderBoard.PlayerLeaderBoardValues = [
 ];
 
 // отображаем изначально нули в очках команд
-redTeam.Properties.Get("Scores").Value = 1;
-blueTeam.Properties.Get("Scores").Value = 1;
+redTeam.Properties.Get("Scores").Value = 0;
+blueTeam.Properties.Get("Scores").Value = 0;
 
 // изначально задаем состояние ожидания других игроков
 SetWaitingMode();
@@ -145,7 +145,7 @@ Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
 
 // Функция для выдачи награды игроку (медаль или сундук)
 function AwardReward(player) {
-    const rewardType = Math.random() < 0 ? "medal" : "chest"; // Случайно выбираем награду
+    const rewardType = Math.random() < 0.5 ? "medal" : "chest"; // Случайно выбираем награду
 
     if (rewardType === "medal") {
         Ui.GetContext(player).Hint.Value += ` You received a medal!`;
