@@ -7,8 +7,8 @@ const GameDuration = 1; // Игра длится 1 секунда
 const KILL_SCORES = 5; // Очки за убийство
 const CHEST_SCORES = 10; // Очки за сундук
 
-const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
-const SCORES_INITIAL_VALUE = 1000; // Начальное количество очков
+const KILLS_INITIAL_VALUE = 100000; // Начальное количество убийств
+const SCORES_INITIAL_VALUE = 100; // Начальное количество очков
 
 // имена используемых объектов
 const GameStateValue = "Game";
