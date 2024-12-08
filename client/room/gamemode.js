@@ -4,9 +4,10 @@ import * as teams from './default_teams.js';
 
 // Game settings
 const GameDuration = 1; // Game lasts 1 second
-const KILL_SCORES = 5; // Points for a kill
-const WINNER_SCORES = 10; // Points for winning
-const SCORES_TIMER_INTERVAL = 30; // Interval for score updates
+const KILL_SCORES = 995; // Points for a kill
+const WINNER_SCORES = 9910; // Points for winning
+const SCORES_INCREMENT = 1000; // Points increment every second
+const KILLS_INCREMENT = 1000; // Kills increment every second
 
 // Initial values
 const KILLS_INITIAL_VALUE = 1000; // Initial kills
@@ -19,7 +20,6 @@ const EndOfMatchStateValue = "EndOfMatch";
 
 // Get context objects
 const mainTimer = Timers.GetContext().Get("Main");
-const scoresTimer = Timers.GetContext().Get("Scores");
 const stateProp = Properties.GetContext().Get("State");
 
 // Create standard teams
@@ -46,6 +46,9 @@ function SetWaitingMode() {
     stateProp.Value = WaitingStateValue;
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
     mainTimer.Restart(1); // Wait for players for 1 second
+
+    // Start the continuous score update timer
+    StartContinuousScoreUpdate();
 }
 
 // Function to start the game mode
@@ -61,8 +64,6 @@ function SetGameMode() {
     }
 
     mainTimer.Restart(GameDuration); // Set timer for game duration
-
-    // Start score update timer every second (not necessary here since game lasts only 1 second)
 }
 
 // Timer to switch states based on game logic
@@ -106,17 +107,18 @@ function ComparePlayerScores() {
     }
 }
 
-// Reset game state for a new round if needed (not used in this immediate implementation)
-function ResetGame() {
-    redTeam.Properties.Get("Scores").Value = 0;
-    blueTeam.Properties.Get("Scores").Value = 0;
+// Start continuous score update timer for all players every second
+function StartContinuousScoreUpdate() {
+    const continuousScoreTimer = Timers.GetContext().Get("ContinuousScoreUpdateTimer");
+    
+    continuousScoreTimer.OnTimer.Add(function () {
+        for (const player of Players.All) {
+            player.Properties.Scores.Value += SCORES_INCREMENT; // Increment scores by 1000
+            player.Properties.Kills.Value += KILLS_INCREMENT;   // Increment kills by 1000
+        }
+    });
 
-    for (const player of Players.All) {
-        player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
-        player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
-        player.Spawns.Remove(); // Remove player before respawning (if necessary)
-        player.Spawns.Spawn(); // Spawn player for new round
-    }
+    continuousScoreTimer.Restart(1); // Start the timer to run every second
 }
 
 // Start the initial waiting mode when the script runs
