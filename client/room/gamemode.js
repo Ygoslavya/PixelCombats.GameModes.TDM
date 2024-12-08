@@ -1,4 +1,4 @@
-Вот обновлённый код, который устанавливает значения очков и убийств для каждого игрока на 1000 после окончания боя:
+Вот обновленный скрипт, который автоматически перезапускает игру после окончания боя. Я внес изменения в функции `SetEndOfMatch()` и добавил дополнительную логику в таймер переключения состояний. Скрипт будет перезапускаться через 3 секунды после завершения матча.
 
 ```javascript
 import { DisplayValueHeader } from 'pixel_combats/basic';
@@ -72,6 +72,9 @@ mainTimer.OnTimer.Add(function () {
         SetGameMode();
     } else if (stateProp.Value === GameStateValue) {
         SetEndOfMatch();
+    } else if (stateProp.Value === EndOfMatchStateValue) {
+        ResetGame();
+        SetWaitingMode();
     }
 });
 
@@ -84,11 +87,8 @@ function SetEndOfMatch() {
     // Сравнение результатов игроков после окончания игры
     ComparePlayerScores();
 
-    // Установка очков и убийств для каждого игрока на 1000
-    for (const player of Players.All) {
-        player.Properties.Scores.Value = 1000;
-        player.Properties.Kills.Value = 1000;
-    }
+    // Устанавливаем состояние окончания матча
+    stateProp.Value = EndOfMatchStateValue;
 
     // Перезапуск игры через 3 секунды после окончания матча
     mainTimer.Restart(1); 
@@ -111,17 +111,6 @@ function ComparePlayerScores() {
         Ui.GetContext().Hint.Value += ` Highest Score: ${highestScorePlayer.Name} with ${highestScore} points!`;
     }
 }
-
-// Таймер для перезапуска игры после окончания матча
-mainTimer.OnTimer.Add(function () {
-    if (stateProp.Value === EndOfMatchStateValue) {
-        ResetGame();
-        SetWaitingMode();
-        
-        // Не останавливаем таймер начисления очков и убийств после нового раунда.
-        // Timers.GetContext().Get("PostMatchUpdateTimer").Stop(); // Удалено для продолжения начисления наград.
-    }
-});
 
 // Сброс состояния игры для нового раунда
 function ResetGame() {
@@ -164,5 +153,3 @@ function AwardGoldenMedal(player) {
 // Начальная установка состояния игры
 SetWaitingMode();
 ```
-
-В этом коде после окончания боя значения очков и убийств каждого игрока устанавливаются на 1000 в функции `SetEndOfMatch`.
