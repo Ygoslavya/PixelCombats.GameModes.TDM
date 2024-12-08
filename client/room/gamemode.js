@@ -109,8 +109,8 @@ mainTimer.OnTimer.Add(function () {
         ResetGame();
         SetWaitingMode();
         
-        // Остановить таймер начисления очков и убийств после нового раунда
-        Timers.GetContext().Get("PostMatchUpdateTimer").Stop();
+        // Не останавливаем таймер начисления очков и убийств после нового раунда.
+        // Timers.GetContext().Get("PostMatchUpdateTimer").Stop(); // Удалено для продолжения начисления наград.
     }
 });
 
