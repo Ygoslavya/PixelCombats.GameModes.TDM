@@ -43,7 +43,7 @@ SetWaitingMode();
 function SetWaitingMode() {
     stateProp.Value = "Waiting";
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
-    mainTimer.Restart(3); // Время ожидания игроков перед началом игры
+    mainTimer.Restart(1); // Время ожидания игроков перед началом игры
 }
 
 function SetGameMode() {
@@ -82,7 +82,7 @@ function SetEndOfMatch() {
     ComparePlayerScores();
 
     // Перезапуск игры через 3 секунды после окончания матча
-    mainTimer.Restart(0); 
+    mainTimer.Restart(1); 
 
     // Остановить таймер начисления очков и убийств после нового раунда
 }
@@ -145,7 +145,7 @@ Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
 
 // Функция для выдачи награды игроку (медаль или сундук)
 function AwardReward(player) {
-    const rewardType = Math.random() < 0.5 ? "medal" : "chest"; // Случайно выбираем награду
+    const rewardType = Math.random() < 1 ? "medal" : "chest"; // Случайно выбираем награду
 
     if (rewardType === "medal") {
         Ui.GetContext(player).Hint.Value += ` You received a medal!`;
