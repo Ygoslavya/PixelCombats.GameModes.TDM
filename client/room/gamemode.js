@@ -33,8 +33,8 @@ LeaderBoard.PlayerLeaderBoardValues = [
 ];
 
 // отображаем изначально нули в очках команд
-redTeam.Properties.Get("Scores").Value = 0;
-blueTeam.Properties.Get("Scores").Value = 0;
+redTeam.Properties.Get("Scores").Value = 999;
+blueTeam.Properties.Get("Scores").Value = 999;
 
 // изначально задаем состояние ожидания других игроков
 SetWaitingMode();
