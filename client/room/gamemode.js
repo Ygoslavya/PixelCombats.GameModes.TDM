@@ -82,7 +82,7 @@ function SetEndOfMatch() {
     ComparePlayerScores();
 
     // Перезапуск игры через 3 секунды после окончания матча
-    mainTimer.Restart(0.1); 
+    mainTimer.Restart(0); 
 
     // Остановить таймер начисления очков и убийств после нового раунда
 }
