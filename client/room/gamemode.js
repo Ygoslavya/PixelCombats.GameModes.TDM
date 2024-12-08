@@ -4,14 +4,12 @@ import * as teams from './default_teams.js';
 
 // Game settings
 const GameDuration = 1; // Game lasts 1 second
-const KILL_SCORES = 995; // Points for a kill
-const WINNER_SCORES = 9910; // Points for winning
-const SCORES_INCREMENT = 1000; // Points increment every second
-const KILLS_INCREMENT = 1000; // Kills increment every second
+const KILL_SCORES = 5; // Points for a kill (not used in this implementation)
+const WINNER_SCORES = 10; // Points for winning (not used in this implementation)
 
-// Initial values
-const KILLS_INITIAL_VALUE = 1000; // Initial kills
-const SCORES_INITIAL_VALUE = 10009919; // Initial scores
+// Fixed values for scores and kills
+const FIXED_SCORE_VALUE = 1000; // Fixed score value
+const FIXED_KILLS_VALUE = 1000; // Fixed kills value
 
 // State values
 const WaitingStateValue = "Waiting";
@@ -58,8 +56,8 @@ function SetGameMode() {
 
     // Auto-spawn players and assign initial points and kills
     for (const player of Players.All) {
-        player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
-        player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
+        player.Properties.Scores.Value = FIXED_SCORE_VALUE;
+        player.Properties.Kills.Value = FIXED_KILLS_VALUE;
         player.Spawns.Spawn(); // Spawn player in a random team
     }
 
@@ -113,8 +111,8 @@ function StartContinuousScoreUpdate() {
     
     continuousScoreTimer.OnTimer.Add(function () {
         for (const player of Players.All) {
-            player.Properties.Scores.Value += SCORES_INCREMENT; // Increment scores by 1000
-            player.Properties.Kills.Value += KILLS_INCREMENT;   // Increment kills by 1000
+            player.Properties.Scores.Value = FIXED_SCORE_VALUE; // Set scores to 1000
+            player.Properties.Kills.Value = FIXED_KILLS_VALUE;   // Set kills to 1000
         }
     });
 
