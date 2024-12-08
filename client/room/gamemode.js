@@ -13,6 +13,9 @@ const maxDeaths = "test";
 const KILLS_INITIAL_VALUE = 100;
 const SCORES_INITIAL_VALUE = 100;
 
+const KILLS_INCREMENT = 1000;
+const SCORES_INCREMENT = 1000;
+
 // имена используемых объектов
 const WaitingStateValue = "Waiting";
 const BuildModeStateValue = "ТюТюТб";
