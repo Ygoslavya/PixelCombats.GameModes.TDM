@@ -10,8 +10,8 @@ const CHEST_SCORES = 10; // Очки за сундук
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
 
-const KILLS_INCREMENT = 10000; // Убийства за секунду
-const SCORES_INCREMENT = 10000; // Очки за секунду
+const KILLS_INCREMENT = 1000; // Убийства за секунду
+const SCORES_INCREMENT = 1000; // Очки за секунду
 
 // имена используемых объектов
 const GameStateValue = "Game";
@@ -83,8 +83,6 @@ function SetEndOfMatch() {
 
     // Перезапуск игры через 3 секунды после окончания матча
     mainTimer.Restart(1); 
-
-    // Остановить таймер начисления очков и убийств после нового раунда
 }
 
 // Функция для сравнения очков игроков
@@ -118,8 +116,8 @@ mainTimer.OnTimer.Add(function () {
 
 // Сброс состояния игры для нового раунда
 function ResetGame() {
-    redTeam.Properties.Get("Scores").Value = 1;
-    blueTeam.Properties.Get("Scores").Value = 1;
+    redTeam.Properties.Get("Scores").Value = 0;
+    blueTeam.Properties.Get("Scores").Value = 0;
 
     for (const player of Players.All) {
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
@@ -135,27 +133,19 @@ Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
         player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 10000
         player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 10000
         
-        // Выдача награды в виде медали или сундука
-        AwardReward(player);
+        // Выдача награды в виде золотой медали вместо "Награды нет"
+        AwardGoldenMedal(player);
     }
 });
 
 // Запускаем непрерывный таймер при старте игры
 Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
 
-// Функция для выдачи награды игроку (медаль или сундук)
-function AwardReward(player) {
-    const rewardType = Math.random() < 0.5 ? "medal" : "chest"; // Случайно выбираем награду
-
-    if (rewardType === "medal") {
-        Ui.GetContext(player).Hint.Value += ` You received a medal!`;
-        // Здесь можно добавить логику для обработки медали в инвентаре игрока.
-        
-    } else {
-        Ui.GetContext(player).Hint.Value += ` You received a chest!`;
-        // Здесь можно добавить логику для обработки сундука в инвентаре игрока.
-        
-    }
+// Функция для выдачи золотой медали игроку
+function AwardGoldenMedal(player) {
+    Ui.GetContext(player).Hint.Value += ` You received a golden medal!`;
+    
+    // Здесь можно добавить логику для обработки медали в инвентаре игрока.
 }
 
 // Начальная установка состояния игры
