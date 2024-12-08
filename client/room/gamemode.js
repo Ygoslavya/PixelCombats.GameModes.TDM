@@ -46,15 +46,26 @@ function SetWaitingMode() {
     mainTimer.Restart(1); // Время ожидания игроков перед началом игры
 }
 
+// Функция для случайного распределения игроков по командам
+function RandomlyAssignPlayerToTeam(player) {
+    const teamToJoin = Math.random() < 0.5 ? blueTeam : redTeam; // Случайный выбор команды
+    teamToJoin.Add(player);
+}
+
+// Обработчик события при входе игрока в игру
+Players.OnPlayerJoin.Add(function (player) {
+    player.Properties.Scores.Value = KILLS_INITIAL_VALUE; // Устанавливаем начальные очки
+    player.Properties.Kills.Value = KILLS_INITIAL_VALUE; // Устанавливаем начальные убийства
+    RandomlyAssignPlayerToTeam(player); // Назначаем команду игроку
+});
+
+// Запуск режима игры
 function SetGameMode() {
     stateProp.Value = GameStateValue;
     Ui.GetContext().Hint.Value = "Hint/GameStarted";
 
-    // Автоматический спавн игроков и присвоение очков и убийств
     for (const player of Players.All) {
-        player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
-        player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
-        player.Spawns.Spawn(); // Спавн игрока
+        player.Spawns.Spawn(); // Спавн игрока (если не спавнится автоматически)
     }
 
     mainTimer.Restart(GameDuration); // Устанавливаем таймер на 0.1 секунды
@@ -130,8 +141,8 @@ function ResetGame() {
 // Таймер для обновления очков и убийств каждую секунду независимо от состояния боя и комнаты
 Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
     for (const player of Players.All) {
-        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 1000
-        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 1000
+        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 10000
+        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 10000
         
         // Выдача награды в виде золотой медали вместо "Награды нет"
         AwardGoldenMedal(player);
