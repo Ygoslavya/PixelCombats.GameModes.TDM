@@ -1,4 +1,4 @@
-Вот изменённый код, в котором начальное количество очков и убийств устанавливается равным 1000. Просто добавлены строки для установки этих значений при инициализации игроков и команд.
+Вот изменённый код, в котором продолжительность игры установлена на 1 секунду. Это достигается изменением значения переменной GameModeTime на 1:
 
 import { DisplayValueHeader } from 'pixel_combats/basic';
 import { Game, Players, Inventory, LeaderBoard, BuildBlocksSet, Teams, Damage, BreackGraph, Ui, Properties, GameMode, Spawns, Timers, TeamsBalancer, NewGame, NewGameVote } from 'pixel_combats/room';
@@ -6,17 +6,18 @@ import * as teams from './default_teams.js';
 import * as default_timer from './default_timer.js';
 
 // настройки
-const WaitingPlayersTime = 1;
-const BuildBaseTime = 1;
-const KnivesModeTime = 1;
-const GameModeTime = default_timer.game_mode_length_seconds();
-const MockModeTime = 1;
-const EndOfMatchTime = 1;
+const WaitingPlayersTime = 10;
+const BuildBaseTime = 30;
+const KnivesModeTime = 40;
+const GameModeTime = 1; // игра длится 1 секунду
+const MockModeTime = 20;
+const EndOfMatchTime = 8;
+const VoteTime = 20;
 
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10;
-const TIMER_SCORES = 999;
-const SCORES_TIMER_INTERVAL = 1;
+const TIMER_SCORES = 5;
+const SCORES_TIMER_INTERVAL = 30;
 
 // имена используемых объектов
 const WaitingStateValue = "Waiting";
@@ -107,5 +108,5 @@ Timers.OnPlayerTimer.Add(function (timer) {
 // остальной код аналогичен вашему оригинальному
 // ...
 
-Добавлены строки для задания начальных значений очков и убийств игрокам (Players.OnPlayerAdded.Add) и командам (redTeam и blueTeam). Остальная логика остается неизменной.
+Теперь продолжительность основного игрового режима установлена на 1 секунду. Остальной код остался неизменным.
 
