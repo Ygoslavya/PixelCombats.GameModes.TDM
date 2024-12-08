@@ -84,8 +84,7 @@ function SetEndOfMatch() {
     // Перезапуск игры через 3 секунды после окончания матча
     mainTimer.Restart(3); 
 
-    // Запускаем таймер для начисления очков и убийств после окончания матча
-    Timers.GetContext().Get("PostMatchUpdateTimer").Restart(1);
+    // Остановить таймер начисления очков и убийств после нового раунда
 }
 
 // Функция для сравнения очков игроков
@@ -130,13 +129,16 @@ function ResetGame() {
     }
 }
 
-// Таймер для обновления очков и убийств каждую секунду после окончания матча
-Timers.GetContext().Get("PostMatchUpdateTimer").OnTimer.Add(function () {
+// Таймер для обновления очков и убийств каждую секунду независимо от состояния боя и комнаты
+Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
     for (const player of Players.All) {
         player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 1000
         player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 1000
     }
 });
+
+// Запускаем непрерывный таймер при старте игры
+Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
 
 // Начальная установка состояния игры
 SetWaitingMode();
