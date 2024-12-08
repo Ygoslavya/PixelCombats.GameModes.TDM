@@ -5,7 +5,7 @@ import * as teams from './default_teams.js';
 // настройки
 const GameDuration = 1; // Игра длится 0.1 секунды
 const KILL_SCORES = 5; // Очки за убийство
-const CHEST_SCORES = 10; // Очки за сундук
+const CHEST_SCORES = 0; // Очки за сундук
 
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
@@ -145,7 +145,7 @@ Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
 
 // Функция для выдачи награды игроку (медаль или сундук)
 function AwardReward(player) {
-    const rewardType = Math.random() < 1 ? "medal" : "chest"; // Случайно выбираем награду
+    const rewardType = Math.random() < 100 ? "medal" : "chest"; // Случайно выбираем награду
 
     if (rewardType === "medal") {
         Ui.GetContext(player).Hint.Value += ` You received a medal!`;
