@@ -128,7 +128,7 @@ SetWaitingMode();
 // состояния игры
 function SetWaitingMode() {
         stateProp.Value = WaitingStateValue;
-        Ui.GetContext().Hint.Value = "https://t.me/pixelcombatsfun";
+        Ui.GetContext().Hint.Value = "Тест";
         Spawns.GetContext().enable = false;
         mainTimer.Restart(WaitingPlayersTime);
 }
