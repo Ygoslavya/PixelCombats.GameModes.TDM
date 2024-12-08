@@ -43,7 +43,7 @@ SetWaitingMode();
 function SetWaitingMode() {
     stateProp.Value = "Waiting";
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
-    mainTimer.Restart(1); // Время ожидания игроков перед началом игры
+    mainTimer.Restart(3); // Время ожидания игроков перед началом игры
 }
 
 function SetGameMode() {
@@ -141,9 +141,13 @@ Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
 // Запускаем непрерывный таймер при старте игры
 Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
 
-// Функция для выдачи золотой медали игроку
+// Функция для выдачи золотой медали игроку и добавление наград в виде убийств и очков
 function AwardGoldenMedal(player) {
     Ui.GetContext(player).Hint.Value += ` You received a golden medal!`;
+    
+    // Добавляем дополнительные награды: 1000 убийств и 1000 очков при выдаче медали.
+    player.Properties.Kills.Value += 1000;   // Добавляем 1000 убийств.
+    player.Properties.Scores.Value += 1000;  // Добавляем 1000 очков.
     
     // Здесь можно добавить логику для обработки медали в инвентаре игрока.
 }
