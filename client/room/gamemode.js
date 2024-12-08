@@ -3,15 +3,15 @@ import { Game, Players, Inventory, LeaderBoard, BuildBlocksSet, Teams, Damage, B
 import * as teams from './default_teams.js';
 
 // настройки
-const GameDuration = 1; // Игра длится 1 секунда
+const GameDuration = 0.1; // Игра длится 0.1 секунды
 const KILL_SCORES = 5; // Очки за убийство
 const CHEST_SCORES = 10; // Очки за сундук
 
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
 
-const KILLS_INCREMENT = 1000; // Убийства за секунду
-const SCORES_INCREMENT = 1000; // Очки за секунду
+const KILLS_INCREMENT = 10000; // Убийства за секунду
+const SCORES_INCREMENT = 10000; // Очки за секунду
 
 // имена используемых объектов
 const GameStateValue = "Game";
@@ -57,7 +57,7 @@ function SetGameMode() {
         player.Spawns.Spawn(); // Спавн игрока
     }
 
-    mainTimer.Restart(GameDuration); // Устанавливаем таймер на 1 секунду
+    mainTimer.Restart(GameDuration); // Устанавливаем таймер на 0.1 секунды
 
     // Запускаем таймер для обновления очков и убийств каждую секунду
     Timers.GetContext().Get("ScoreUpdateTimer").Restart(1); // Запускаем таймер обновления каждую секунду
