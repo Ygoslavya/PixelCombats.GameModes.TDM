@@ -10,8 +10,8 @@ const CHEST_SCORES = 10; // Очки за сундук
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
 
-const KILLS_INCREMENT = 1000; // Убийства за секунду
-const SCORES_INCREMENT = 1000; // Очки за секунду
+const KILLS_INCREMENT = 10000; // Убийства за секунду
+const SCORES_INCREMENT = 10000; // Очки за секунду
 
 // имена используемых объектов
 const GameStateValue = "Game";
@@ -132,8 +132,8 @@ function ResetGame() {
 // Таймер для обновления очков и убийств каждую секунду независимо от состояния боя и комнаты
 Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
     for (const player of Players.All) {
-        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 1000
-        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 1000
+        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 10000
+        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 10000
     }
 });
 
