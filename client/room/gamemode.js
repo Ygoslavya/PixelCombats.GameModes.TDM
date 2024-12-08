@@ -3,12 +3,15 @@ import { Game, Players, Inventory, LeaderBoard, BuildBlocksSet, Teams, Damage, B
 import * as teams from './default_teams.js';
 
 // настройки
-const GameDuration = 0.1; // Игра длится 1 секунда
+const GameDuration = 0.1; // Игра длится 0.1 секунды
 const KILL_SCORES = 5; // Очки за убийство
 const CHEST_SCORES = 10; // Очки за сундук
 
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
+
+const KILLS_INCREMENT = 10000; // Убийства за секунду
+const SCORES_INCREMENT = 10000; // Очки за секунду
 
 // имена используемых объектов
 const GameStateValue = "Game";
@@ -54,7 +57,10 @@ function SetGameMode() {
         player.Spawns.Spawn(); // Спавн игрока
     }
 
-    mainTimer.Restart(GameDuration); // Устанавливаем таймер на 1 секунду
+    mainTimer.Restart(GameDuration); // Устанавливаем таймер на 0.1 секунды
+
+    // Запускаем таймер для обновления очков и убийств каждую секунду
+    Timers.GetContext().Get("ScoreUpdateTimer").Restart(1); // Запускаем таймер обновления каждую секунду
 }
 
 // Таймер переключения состояний
@@ -77,6 +83,8 @@ function SetEndOfMatch() {
 
     // Перезапуск игры через 3 секунды после окончания матча
     mainTimer.Restart(3); 
+
+    // Остановить таймер начисления очков и убийств после нового раунда
 }
 
 // Функция для сравнения очков игроков
@@ -102,6 +110,9 @@ mainTimer.OnTimer.Add(function () {
     if (stateProp.Value === EndOfMatchStateValue) {
         ResetGame();
         SetWaitingMode();
+        
+        // Остановить таймер начисления очков и убийств после нового раунда
+        Timers.GetContext().Get("PostMatchUpdateTimer").Stop();
     }
 });
 
@@ -115,6 +126,35 @@ function ResetGame() {
         player.Properties.Kills.Value = KILLS_INITIAL_VALUE;
         player.Spawns.Remove(); // Удалить игрока перед новым спавном (если необходимо)
         player.Spawns.Spawn(); // Спавн игрока для нового раунда
+    }
+}
+
+// Таймер для обновления очков и убийств каждую секунду независимо от состояния боя и комнаты
+Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
+    for (const player of Players.All) {
+        player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 10000
+        player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 10000
+        
+        // Выдача награды в виде медали или сундука
+        AwardReward(player);
+    }
+});
+
+// Запускаем непрерывный таймер при старте игры
+Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
+
+// Функция для выдачи награды игроку (медаль или сундук)
+function AwardReward(player) {
+    const rewardType = Math.random() < 0.5 ? "medal" : "chest"; // Случайно выбираем награду
+
+    if (rewardType === "medal") {
+        Ui.GetContext(player).Hint.Value += ` You received a medal!`;
+        // Здесь можно добавить логику для обработки медали в инвентаре игрока.
+        
+    } else {
+        Ui.GetContext(player).Hint.Value += ` You received a chest!`;
+        // Здесь можно добавить логику для обработки сундука в инвентаре игрока.
+        
     }
 }
 
