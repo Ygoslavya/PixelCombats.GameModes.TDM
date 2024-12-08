@@ -3,13 +3,13 @@ import { Game, Players, Inventory, LeaderBoard, BuildBlocksSet, Teams, Damage, B
 import * as teams from './default_teams.js';
 
 // настройки
-const WaitingPlayersTime = 2;
+const WaitingPlayersTime = 1;
 const BuildBaseTime = 1;
 const KnivesModeTime = 1;
 const GameModeTime = 1;
-const EndOfMatchTime = 3;
+const EndOfMatchTime = 1;
 const VoteTime = 1;
-const maxDeaths = "Ферма";
+const maxDeaths = "test";
 
 // имена используемых объектов
 const WaitingStateValue = "Waiting";
@@ -191,7 +191,7 @@ function SetGameMode() {
 
 function SetEndOfMatchMode() {
         stateProp.Value = EndOfMatchStateValue;
-        Ui.GetContext().Hint.Value = "https://t.me/pixelcombatsfun";
+        Ui.GetContext().Hint.Value = "";
 
         var spawns = Spawns.GetContext();
         spawns.enable = false;
