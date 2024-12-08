@@ -5,8 +5,7 @@ import * as teams from './default_teams.js';
 // настройки
 const GameDuration = 1; // Игра длится 1 секунда
 const KILL_SCORES = 5; // Очки за убийство
-const CHEST_SCORES = 10; // Очки за сундук
-const EndOfMatchTime = 3; // Время до перезапуска игры после окончания матча
+const EndOfMatchTime = 1; // Время  перезапуска игры после окончания матча
 
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
@@ -41,7 +40,7 @@ SetWaitingMode();
 function SetWaitingMode() {
     stateProp.Value = "Waiting";
     Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
-    mainTimer.Restart(3); // Время ожидания игроков перед началом игры
+    mainTimer.Restart(1); // Время ожидания игроков перед началом игры
 }
 
 function SetGameMode() {
