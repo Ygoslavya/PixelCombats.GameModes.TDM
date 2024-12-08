@@ -5,7 +5,7 @@ import * as default_timer from './default_timer.js';
 
 // настройки
 const WaitingPlayersTime = 1;
-const BuildBaseTime = 0;
+const BuildBaseTime = 1;
 const KnivesModeTime = 1;
 const GameModeTime = default_timer.game_mode_length_seconds();
 const MockModeTime = 1;
