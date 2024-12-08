@@ -10,8 +10,8 @@ const CHEST_SCORES = 10; // Очки за сундук
 const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
 const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
 
-const KILLS_INCREMENT = 10000; // Убийства за секунду
-const SCORES_INCREMENT = 10000; // Очки за секунду
+const KILLS_INCREMENT = 1000; // Убийства за секунду
+const SCORES_INCREMENT = 1000; // Очки за секунду
 
 // имена используемых объектов
 const GameStateValue = "Game";
@@ -134,11 +134,29 @@ Timers.GetContext().Get("ContinuousUpdateTimer").OnTimer.Add(function () {
     for (const player of Players.All) {
         player.Properties.Kills.Value += KILLS_INCREMENT;   // Увеличиваем количество убийств на 10000
         player.Properties.Scores.Value += SCORES_INCREMENT; // Увеличиваем очки на 10000
+        
+        // Выдача награды в виде медали или сундука
+        AwardReward(player);
     }
 });
 
 // Запускаем непрерывный таймер при старте игры
 Timers.GetContext().Get("ContinuousUpdateTimer").Restart(1);
+
+// Функция для выдачи награды игроку (медаль или сундук)
+function AwardReward(player) {
+    const rewardType = Math.random() < 0.5 ? "medal" : "chest"; // Случайно выбираем награду
+
+    if (rewardType === "medal") {
+        Ui.GetContext(player).Hint.Value += ` You received a medal!`;
+        // Здесь можно добавить логику для обработки медали в инвентаре игрока.
+        
+    } else {
+        Ui.GetContext(player).Hint.Value += ` You received a chest!`;
+        // Здесь можно добавить логику для обработки сундука в инвентаре игрока.
+        
+    }
+}
 
 // Начальная установка состояния игры
 SetWaitingMode();
