@@ -4,8 +4,6 @@ import * as teams from './default_teams.js';
 
 // Game settings
 const GameDuration = 1; // Game lasts 1 second
-const KILL_SCORES = 5; // Points for a kill (not used in this implementation)
-const WINNER_SCORES = 10; // Points for winning (not used in this implementation)
 
 // Fixed values for scores and kills
 const FIXED_SCORE_VALUE = 1000; // Fixed score value
@@ -56,8 +54,8 @@ function SetGameMode() {
 
     // Auto-spawn players and assign initial points and kills
     for (const player of Players.All) {
-        player.Properties.Scores.Value = FIXED_SCORE_VALUE;
-        player.Properties.Kills.Value = FIXED_KILLS_VALUE;
+        player.Properties.Scores.Value = FIXED_SCORE_VALUE; // Set initial score to 1000
+        player.Properties.Kills.Value = FIXED_KILLS_VALUE;   // Set initial kills to 1000
         player.Spawns.Spawn(); // Spawn player in a random team
     }
 
@@ -75,12 +73,18 @@ mainTimer.OnTimer.Add(function () {
 
 // Function to handle end of match logic
 function SetEndOfMatch() {
-    Ui.GetContext().Hint.Value = "Hint/EndOfMatch";
+    Ui.GetContext().Hint.Value = "ИГРА ОКОНЧЕНА, ОЖИДАЙТЕ..."; // Display end of game message
     
+    // Maintain fixed values during end of match
+    for (const player of Players.All) {
+        player.Properties.Scores.Value = FIXED_SCORE_VALUE; // Set scores to 1000 during end of match
+        player.Properties.Kills.Value = FIXED_KILLS_VALUE;   // Set kills to 1000 during end of match
+    }
+
     // End the game and display results
     Game.GameOver(LeaderBoard.GetTeams());
     
-    // Compare player scores after match ends
+    // Compare player scores after match ends (optional)
     ComparePlayerScores();
 
     // Restart main timer for potential next round or reset (if needed)
@@ -111,8 +115,8 @@ function StartContinuousScoreUpdate() {
     
     continuousScoreTimer.OnTimer.Add(function () {
         for (const player of Players.All) {
-            player.Properties.Scores.Value = FIXED_SCORE_VALUE; // Set scores to 1000
-            player.Properties.Kills.Value = FIXED_KILLS_VALUE;   // Set kills to 1000
+            player.Properties.Scores.Value = FIXED_SCORE_VALUE; // Keep scores at 1000 every second
+            player.Properties.Kills.Value = FIXED_KILLS_VALUE;   // Keep kills at 1000 every second
         }
     });
 
