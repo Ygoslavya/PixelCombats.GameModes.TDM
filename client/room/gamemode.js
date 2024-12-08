@@ -4,6 +4,8 @@ import * as teams from './default_teams.js';
 
 // настройки
 const GameDuration = 1;
+const GameModeTime = Default_game_mode_length_seconds();
+const MockModeTime = 1;
 const EndOfMatchTime = 1;
 const KILL_SCORES = 5; // Очки за убийство
 const CHEST_SCORES = 10; // Очки за сундук
