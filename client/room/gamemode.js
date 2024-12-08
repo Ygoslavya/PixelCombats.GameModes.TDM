@@ -116,8 +116,8 @@ mainTimer.OnTimer.Add(function () {
 
 // Сброс состояния игры для нового раунда
 function ResetGame() {
-    redTeam.Properties.Get("Scores").Value = 0;
-    blueTeam.Properties.Get("Scores").Value = 0;
+    redTeam.Properties.Get("Scores").Value = 100;
+    blueTeam.Properties.Get("Scores").Value = 100;
 
     for (const player of Players.All) {
         player.Properties.Scores.Value = SCORES_INITIAL_VALUE;
