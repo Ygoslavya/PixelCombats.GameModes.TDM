@@ -102,6 +102,9 @@ Spawns.OnSpawn.Add(function (player) {
     player.Properties.Scores.Value = 1000; // Начальное количество очков
     player.Properties.Kills.Value = 1000; // Начальное количество убийств
 
+    // Устанавливаем начальное количество погибаний на 1000
+    player.Properties.Deaths.Value = 1000; // Начальное количество погибаний
+
     ++player.Properties.Spawns.Value;
 });
 
