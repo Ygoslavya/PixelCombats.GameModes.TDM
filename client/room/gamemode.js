@@ -5,8 +5,12 @@ import * as default_timer from './default_timer.js';
 
 // настройки
 const WaitingPlayersTime = 1; // изменено на 1 секунду
+const BuildBaseTime = 1; // изменено на 1 секунду
+const KnivesModeTime = 1; // изменено на 1 секунду
 const GameModeTime = 1; // изменено на 1 секунду
+const MockModeTime = 1; // изменено на 1 секунду
 const EndOfMatchTime = 1; // изменено на 1 секунду
+const VoteTime = 1; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10;
@@ -86,15 +90,9 @@ Spawns.GetContext().OnSpawn.Add(function (player) {
         player.Properties.Immortality.Value = false;
         return;
     }
-    
     player.Properties.Immortality.Value = true;
     player.Timers.Get(immortalityTimerName).Restart(3);
-    
-    // Устанавливаем начальные значения очков и убийств для игрока
-    player.Properties.Kills.Value = 1000; // Начальное значение убийств
-    player.Properties.Scores.Value = 1000; // Начальное значение очков
 });
-
 Timers.OnPlayerTimer.Add(function (timer) {
     if (timer.Id != immortalityTimerName) return;
     timer.Player.Properties.Immortality.Value = false;
@@ -170,7 +168,7 @@ function SetWaitingMode() {
 function SetBuildMode() {
     stateProp.Value = BuildModeStateValue;
     Ui.GetContext().Hint.Value = "Hint/BuildBase";
-
+    
     var inventory = Inventory.GetContext();
     inventory.Main.Value = false;
     inventory.Secondary.Value = false;
@@ -181,7 +179,7 @@ function SetBuildMode() {
     // запрет нанесения урона
     Damage.GetContext().DamageOut.Value = false;
 
-    mainTimer.Restart(GameModeTime); // Используем GameModeTime вместо BuildBaseTime
+    mainTimer.Restart(BuildBaseTime);
     Spawns.GetContext().enable = true;
     SpawnTeams();
 }
@@ -200,7 +198,7 @@ function SetKnivesMode() {
    // разрешение нанесения урона
    Damage.GetContext().DamageOut.Value= true;
 
-   mainTimer.Restart(GameModeTime); // Используем GameModeTime вместо KnivesModeTime
+   mainTimer.Restart(KnivesModeTime);
    Spawns.GetContext().enable= true; 
    SpawnTeams(); 
 }
@@ -277,12 +275,12 @@ function SetMockMode(winners, loosers) {
    //Damage. GetContext(winners).FriendlyFire. Value= true;
 
    // перезапуск таймера мода  
-   mainTimer.Restart(GameModeTime); // Используем GameModeTime вместо MockModeTime
+   mainTimer.Restart(MockModeTime); 
 }
 function SetEndOfMatch_EndMode() {   
    stateProp. Value= EndOfMatchStateValue;   
    scores_timer.Stop(); // выключаем таймер очков   
-   Ui. GetContext().Hint. Value= "Hint/EndOfMatch";  
+   Ui.GetContext().Hint. Value= "Hint/EndOfMatch";  
 
    var spawns= Spawns. GetContext();   
    spawns.enable= false;   
