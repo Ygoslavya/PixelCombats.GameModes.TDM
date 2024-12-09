@@ -6,7 +6,6 @@ import * as default_timer from './default_timer.js';
 // настройки
 const WaitingPlayersTime = 1; // Время ожидания игроков
 const BuildBaseTime = 1; // Время на строительство базы
-const KnivesModeTime = 2; // Время режима ножей
 const GameModeTime = 1; // Длительность игрового режима (установлено на 1 секунду)
 const MockModeTime = 1; // Время режима прикола
 const EndOfMatchTime = 1; // Время до конца матча
@@ -20,7 +19,6 @@ const SCORES_TIMER_INTERVAL = 30;
 // имена используемых объектов
 const WaitingStateValue = "Waiting";
 const BuildModeStateValue = "BuildMode";
-const KnivesModeStateValue = "KnivesMode";
 const GameStateValue = "Game";
 const MockModeStateValue = "MockMode";
 const EndOfMatchStateValue = "EndOfMatch";
@@ -142,10 +140,7 @@ mainTimer.OnTimer.Add(function () {
                         SetBuildMode();
                         break;
                 case BuildModeStateValue:
-                        SetKnivesMode();
-                        break;
-                case KnivesModeStateValue:
-                        SetGameMode();
+                        SetGameMode(); // Убрали KnivesMode из переключения состояний.
                         break;
                 case GameStateValue:
                         SetEndOfMatch();
@@ -182,22 +177,6 @@ function SetBuildMode() {
         Damage.GetContext().DamageOut.Value = false;
 
         mainTimer.Restart(BuildBaseTime);
-        Spawns.GetContext().enable = true;
-        SpawnTeams();
-}
-function SetKnivesMode() {
-        stateProp.Value = KnivesModeStateValue;
-        Ui.GetContext().Hint.Value = "Hint/KnivesMode";
-        var inventory = Inventory.GetContext();
-        inventory.Main.Value = false;
-        inventory.Secondary.Value = false;
-        inventory.Melee.Value = true;
-        inventory.Explosive.Value = false;
-        inventory.Build.Value = true;
-        // разрешение нанесения урона
-        Damage.GetContext().DamageOut.Value = true;
-
-        mainTimer.Restart(KnivesModeTime);
         Spawns.GetContext().enable = true;
         SpawnTeams();
 }
