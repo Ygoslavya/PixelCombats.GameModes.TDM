@@ -7,7 +7,7 @@ import * as default_timer from './default_timer.js';
 const WaitingPlayersTime = 1; // Время ожидания игроков
 const BuildBaseTime = 1; // Время на строительство базы
 const KnivesModeTime = 1; // Время режима ножей
-const GameModeTime = default_timer.game_mode_length_seconds(); // Длительность игрового режима (оставляем как есть)
+const GameModeTime = 1; // Длительность игрового режима (установлено на 1 секунду)
 const MockModeTime = 1; // Время режима прикола
 const EndOfMatchTime = 1; // Время до конца матча
 const VoteTime = 1; // Время голосования
@@ -202,43 +202,43 @@ function SetKnivesMode() {
         SpawnTeams();
 }
 function SetGameMode() {
-        // разрешаем нанесение урона
-        Damage.GetContext().DamageOut.Value = true;
-        stateProp.Value = GameStateValue;
-        Ui.GetContext().Hint.Value = "Hint/AttackEnemies";
+	// разрешаем нанесение урона 
+	Damage.GetContext().DamageOut.Set(true); 
+	stateProp.Value= GameStateValue; 
+	Ui.GetContext().Hint.Set("Hint/AttackEnemies"); 
 
-        var inventory = Inventory.GetContext();
-        if (GameMode.Parameters.GetBool("OnlyKnives")) {
-                inventory.Main.Value = false;
-                inventory.Secondary.Value = false;
-                inventory.Melee.Value = true;
-                inventory.Explosive.Value = false;
-                inventory.Build.Value = true;
-        } else {
-                inventory.Main.Value = true;
-                inventory.Secondary.Value = true;
-                inventory.Melee.Value = true;
-                inventory.Explosive.Value = true;
-                inventory.Build.Value = true;
-        }
+	var inventory= Inventory.GetContext(); 
+	if(GameMode.Parameters.GetBool("OnlyKnives")){ 
+		inventory.Main.Set(false); 
+		inventory.Secondary.Set(false); 
+		inventory.Melee.Set(true); 
+		inventory.Explosive.Set(false); 
+		inventory.Build.Set(true); 
+	} else { 
+		inventory.Main.Set(true); 
+		inventory.Secondary.Set(true); 
+		inventory.Melee.Set(true); 
+		inventory.Explosive.Set(true); 
+		inventory.Build.Set(true); 
+	} 
 
-        mainTimer.Restart(GameModeTime);
-        Spawns.GetContext().Despawn();
-        SpawnTeams();
+	mainTimer.Restart(GameModeTime); 
+	Spawns.GetContext().Despawn(); 
+	SpawnTeams(); 
 }
-function SetEndOfMatch() {
-		scores_timer.Stop(); // выключаем таймер очков 
-		const leaderboard= LeaderBoard.GetTeams(); 
-		if(leaderboard[0].Weight !== leaderboard[1].Weight){ 
-				// режим прикола вконце катки 
-				SetMockMode(leaderboard[0].Team, leaderboard[1].Team); 
-				// добавляем очки победившим 
-				for(const win_player of leaderboard[0].Team.Players){ 
-						win_player.Properties.Scores.Value += WINNER_SCORES; 
-				} 
-		} else { 
-				SetEndOfMatch_EndMode(); 
-		} 
+function SetEndOfMatch() { 
+	scores_timer.Stop(); // выключаем таймер очков 
+	const leaderboard= LeaderBoard.GetTeams(); 
+	if(leaderboard[0].Weight !== leaderboard[1].Weight){ 
+			// режим прикола вконце катки 
+			SetMockMode(leaderboard[0].Team, leaderboard[1].Team); 
+			// добавляем очки победившим 
+			for(const win_player of leaderboard[0].Team.Players){ 
+					win_player.Properties.Scores.Value += WINNER_SCORES; 
+			} 
+	} else { 
+			SetEndOfMatch_EndMode(); 
+	} 
 }
 function SetMockMode(winners, loosers) { 
     // задаем состояние игры 
