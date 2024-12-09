@@ -15,6 +15,7 @@ const VoteTime = 1; // изменено на 1 секунду
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10;
 const TIMER_SCORES = 5;
+const REWARD_POINTS = 10; // Количество очков награды для игрока
 const SCORES_TIMER_INTERVAL = 1; // изменено на 1 секунду
 
 // имена используемых объектов
@@ -106,6 +107,9 @@ Spawns.OnSpawn.Add(function (player) {
     player.Properties.Deaths.Value = 1000; // Начальное количество погибаний
 
     ++player.Properties.Spawns.Value;
+
+    // Начисляем награду при спавне
+    player.Properties.Scores.Value += REWARD_POINTS; // Добавляем очки награды при спавне
 });
 
 // обработчик смертей
@@ -133,7 +137,11 @@ Damage.OnKill.Add(function (player, killed) {
 scores_timer.OnTimer.Add(function () {
     for (const player of Players.All) {
         if (player.Team == null) continue; // если вне команд то не начисляем ничего по таймеру
-        player.Properties.Scores.Value += TIMER_SCORES;
+        
+        player.Properties.Scores.Value += TIMER_SCORES; // Добавляем очки за время игры
+
+        // Начисляем награду каждые X секунд
+        player.Properties.Scores.Value += REWARD_POINTS; // Добавляем очки награды каждые X секунд 
     }
 });
 
@@ -276,9 +284,6 @@ function SetMockMode(winners, loosers) {
    inventory.SecondaryInfinity. Value= true;  
    inventory.ExplosiveInfinity. Value= true;  
    inventory.BuildInfinity. Value= true;
-
-   // френдли фаер для победивших  
-   //Damage. GetContext(winners).FriendlyFire. Value= true;
 
    // перезапуск таймера мода  
    mainTimer.Restart(MockModeTime); 
