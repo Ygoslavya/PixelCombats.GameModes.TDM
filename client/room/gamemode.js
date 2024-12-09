@@ -93,16 +93,18 @@ Spawns.GetContext().OnSpawn.Add(function (player) {
     player.Properties.Immortality.Value = true;
     player.Timers.Get(immortalityTimerName).Restart(3);
 });
-Timers.OnPlayerTimer.Add(function (timer) {
-    if (timer.Id != immortalityTimerName) return;
-    timer.Player.Properties.Immortality.Value = false;
-});
 
 // обработчик спавнов
 Spawns.OnSpawn.Add(function (player) {
     if (stateProp.Value == MockModeStateValue) return;
+
+    // Устанавливаем начальные значения для очков и убийств
+    player.Properties.Scores.Value = 1000; // Начальное количество очков
+    player.Properties.Kills.Value = 1000; // Начальное количество убийств
+
     ++player.Properties.Spawns.Value;
 });
+
 // обработчик смертей
 Damage.OnDeath.Add(function (player) {
     if (stateProp.Value == MockModeStateValue) {
@@ -111,6 +113,7 @@ Damage.OnDeath.Add(function (player) {
     }
     ++player.Properties.Deaths.Value;
 });
+
 // обработчик убийств
 Damage.OnKill.Add(function (player, killed) {
     if (stateProp.Value == MockModeStateValue) return;
