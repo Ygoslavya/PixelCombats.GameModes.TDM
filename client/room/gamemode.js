@@ -6,7 +6,7 @@ import * as default_timer from './default_timer.js';
 // настройки
 const WaitingPlayersTime = 1; // Время ожидания игроков
 const BuildBaseTime = 1; // Время на строительство базы
-const KnivesModeTime = 1; // Время режима ножей
+const KnivesModeTime = 2; // Время режима ножей
 const GameModeTime = 1; // Длительность игрового режима (установлено на 1 секунду)
 const MockModeTime = 1; // Время режима прикола
 const EndOfMatchTime = 1; // Время до конца матча
