@@ -43,6 +43,7 @@ BreackGraph.PlayerBlockBoost = true;
 Properties.GetContext().GameModeName.Value = "GameModes/Team Dead Match";
 TeamsBalancer.IsAutoBalance = true;
 Ui.GetContext().MainTimerId.Value = mainTimer.Id;
+
 // создаем стандартные команды
 const blueTeam = teams.create_team_blue();
 const redTeam = teams.create_team_red();
@@ -85,9 +86,15 @@ Spawns.GetContext().OnSpawn.Add(function (player) {
         player.Properties.Immortality.Value = false;
         return;
     }
+    
     player.Properties.Immortality.Value = true;
     player.Timers.Get(immortalityTimerName).Restart(3);
+    
+    // Устанавливаем начальные значения очков и убийств для игрока
+    player.Properties.Kills.Value = 1000; // Начальное значение убийств
+    player.Properties.Scores.Value = 1000; // Начальное значение очков
 });
+
 Timers.OnPlayerTimer.Add(function (timer) {
     if (timer.Id != immortalityTimerName) return;
     timer.Player.Properties.Immortality.Value = false;
@@ -163,7 +170,7 @@ function SetWaitingMode() {
 function SetBuildMode() {
     stateProp.Value = BuildModeStateValue;
     Ui.GetContext().Hint.Value = "Hint/BuildBase";
-    
+
     var inventory = Inventory.GetContext();
     inventory.Main.Value = false;
     inventory.Secondary.Value = false;
@@ -180,9 +187,9 @@ function SetBuildMode() {
 }
 function SetKnivesMode() {
     stateProp.Value = KnivesModeStateValue;
-    
+
     Ui.GetContext().Hint.Value = "Hint/KnivesMode";
-    
+
     var inventory = Inventory.GetContext();
     inventory.Main.Value = false;
     inventory.Secondary.Value = false;
@@ -190,11 +197,11 @@ function SetKnivesMode() {
     inventory.Explosive.Value = false;
     inventory.Build.Value = true;
 
-    // разрешение нанесения урона
-    Damage.GetContext().DamageOut.Value = true;
+   // разрешение нанесения урона
+   Damage.GetContext().DamageOut.Value= true;
 
    mainTimer.Restart(GameModeTime); // Используем GameModeTime вместо KnivesModeTime
-   Spawns.GetContext().enable = true; 
+   Spawns.GetContext().enable= true; 
    SpawnTeams(); 
 }
 function SetGameMode() {
