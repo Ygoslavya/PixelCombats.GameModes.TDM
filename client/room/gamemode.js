@@ -4,13 +4,13 @@ import * as teams from './default_teams.js';
 import * as default_timer from './default_timer.js';
 
 // настройки
-const WaitingPlayersTime = 20;
-const BuildBaseTime = 30;
-const KnivesModeTime = 40
-const GameModeTime = default_timer.game_mode_length_seconds();
-const MockModeTime = 20;
-const EndOfMatchTime = 8;
-const VoteTime = 20;
+const WaitingPlayersTime = 1; // Время ожидания игроков
+const BuildBaseTime = 1; // Время на строительство базы
+const KnivesModeTime = 1; // Время режима ножей
+const GameModeTime = default_timer.game_mode_length_seconds(); // Длительность игрового режима (оставляем как есть)
+const MockModeTime = 1; // Время режима прикола
+const EndOfMatchTime = 1; // Время до конца матча
+const VoteTime = 1; // Время голосования
 
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10;
@@ -104,7 +104,7 @@ Spawns.OnSpawn.Add(function (player) {
         // Установка начальных значений
         player.Properties.Scores.Value = 1000; // Начальное количество очков
         player.Properties.Kills.Value = 1000; // Начальное количество убийств
-        
+
         ++player.Properties.Spawns.Value;
 });
 // обработчик смертей
@@ -227,56 +227,55 @@ function SetGameMode() {
         SpawnTeams();
 }
 function SetEndOfMatch() {
-        scores_timer.Stop(); // выключаем таймер очков
-        const leaderboard = LeaderBoard.GetTeams();
-        if (leaderboard[0].Weight !== leaderboard[1].Weight) {
-                // режим прикола вконце катки
-                SetMockMode(leaderboard[0].Team, leaderboard[1].Team);
-                // добавляем очки победившим
-                for (const win_player of leaderboard[0].Team.Players) {
-                        win_player.Properties.Scores.Value += WINNER_SCORES;
-                }
-        }
-        else {
-                SetEndOfMatch_EndMode();
-        }
+		scores_timer.Stop(); // выключаем таймер очков 
+		const leaderboard= LeaderBoard.GetTeams(); 
+		if(leaderboard[0].Weight !== leaderboard[1].Weight){ 
+				// режим прикола вконце катки 
+				SetMockMode(leaderboard[0].Team, leaderboard[1].Team); 
+				// добавляем очки победившим 
+				for(const win_player of leaderboard[0].Team.Players){ 
+						win_player.Properties.Scores.Value += WINNER_SCORES; 
+				} 
+		} else { 
+				SetEndOfMatch_EndMode(); 
+		} 
 }
-function SetMockMode(winners, loosers) {
-        // задаем состояние игры
-        stateProp.Value = MockModeStateValue;
-        scores_timer.Stop(); // выключаем таймер очков
-
-        // подсказка
-        Ui.GetContext(winners).Hint.Value = "Hint/MockHintForWinners";
-        Ui.GetContext(loosers).Hint.Value = "Hint/MockHintForLoosers";
-
-        // разрешаем нанесение урона
-        Damage.GetContext().DamageOut.Value = true;
-        
-	// время спавна для проигравших 
-	Spawns.GetContext(loosers).RespawnTime.Set(2); 
-
-	// set loosers 
-	var inventoryLosingTeam= Inventory.GetContext(loosers); 
-	inventoryLosingTeam.Main.Set(false); 
-	inventoryLosingTeam.Secondary.Set(false); 
-	inventoryLosingTeam.Melee.Set(false); 
-	inventoryLosingTeam.Explosive.Set(false); 
-	inventoryLosingTeam.Build.Set(false); 
-
-	// set winners 
-	var inventoryWinningTeam= Inventory.GetContext(winners); 
-	inventoryWinningTeam.MainInfinity.Set(true); 
-	inventoryWinningTeam.SecondaryInfinity.Set(true); 
-	inventoryWinningTeam.ExplosiveInfinity.Set(true); 
-	inventoryWinningTeam.BuildInfinity.Set(true);
-
-	// перезапуск таймера мода 
-	mainTimer.Restart(MockModeTime);
-}
-function SetEndOfMatch_EndMode() {
-    stateProp.Value= EndOfMatchStateValue; 
+function SetMockMode(winners, loosers) { 
+    // задаем состояние игры 
+    stateProp.Value= MockModeStateValue; 
     scores_timer.Stop(); // выключаем таймер очков 
+
+    // подсказка 
+    Ui.GetContext(winners).Hint.Set("Hint/MockHintForWinners"); 
+    Ui.GetContext(loosers).Hint.Set("Hint/MockHintForLoosers"); 
+
+    // разрешаем нанесение урона 
+    Damage.GetContext().DamageOut.Set(true); 
+
+    // время спавна для проигравших  
+    Spawns.GetContext(loosers).RespawnTime.Set(2); 
+
+    // set loosers  
+    var inventoryLosingTeam= Inventory.GetContext(loosers); 
+    inventoryLosingTeam.Main.Set(false); 
+    inventoryLosingTeam.Secondary.Set(false); 
+    inventoryLosingTeam.Melee.Set(false); 
+    inventoryLosingTeam.Explosive.Set(false); 
+    inventoryLosingTeam.Build.Set(false); 
+
+    // set winners  
+    var inventoryWinningTeam= Inventory.GetContext(winners); 
+    inventoryWinningTeam.MainInfinity.Set(true); 
+    inventoryWinningTeam.SecondaryInfinity.Set(true); 
+    inventoryWinningTeam.ExplosiveInfinity.Set(true); 
+    inventoryWinningTeam.BuildInfinity.Set(true);
+
+    // перезапуск таймера мода  
+    mainTimer.Restart(MockModeTime); 
+}
+function SetEndOfMatch_EndMode() { 
+    stateProp.Value= EndOfMatchStateValue; 
+    scores_timer.Stop(); // выключаем таймер очков  
     Ui.GetContext().Hint.Set("Hint/EndOfMatch"); 
 
     var spawns= Spawns.GetContext(); 
@@ -298,9 +297,9 @@ function start_vote() {
     NewGameVote.Start({ Variants: [{ MapId: 0 }], Timer: VoteTime }, MapRotation ? 3 : 0); 
 }
 
-function SpawnTeams() { 
-    for(const team of Teams)
-         Spawns.GetContext(team).Spawn(); 
+function SpawnTeams() {  
+	for(const team of Teams)  
+		 Spawns.GetContext(team).Spawn();  
 }
 
 scores_timer.RestartLoop(SCORES_TIMER_INTERVAL);
