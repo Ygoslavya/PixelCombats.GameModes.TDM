@@ -5,10 +5,10 @@ import * as default_timer from './default_timer.js';
 
 // настройки
 const WaitingPlayersTime = 1; // изменено на 1 секунду
-const BuildBaseTime = 2; // изменено на 1 секунду
-const KnivesModeTime = 2; // изменено на 1 секунду
-const GameModeTime = 2; // изменено на 1 секунду
-const MockModeTime = 2; // изменено на 1 секунду
+const BuildBaseTime = 1; // изменено на 1 секунду
+const KnivesModeTime = 1; // изменено на 1 секунду
+const GameModeTime = 1; // изменено на 1 секунду
+const MockModeTime = 1; // изменено на 1 секунду
 const EndOfMatchTime = 1; // изменено на 1 секунду
 const VoteTime = 1; // изменено на 1 секунду
 
@@ -56,7 +56,7 @@ blueTeam.Build.BlocksSet.Value = BuildBlocksSet.Blue;
 redTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 
 // устанавливаем начальные очки для команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = 0; // Красная команда начинает с 0 очков
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = 999; // Красная команда начинает с 0 очков
 blueTeam.Properties.Get(SCORES_PROP_NAME).Value = 1000; // Синяя команда начинает с 1000 очков
 
 // настраиваем параметры, которые нужно выводить в лидерборде
