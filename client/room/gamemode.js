@@ -13,9 +13,9 @@ const EndOfMatchTime = 6; // изменено на 1 секунду
 const VoteTime = 2; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
-const WINNER_SCORES = 10;
+const WINNER_SCORES = 10000000000;
 const TIMER_SCORES = 5;
-const REWARD_POINTS = 0; // Количество очков награды для игрока
+const REWARD_POINTS = 1; // Количество очков награды для игрока
 const SCORES_TIMER_INTERVAL = 1; // изменено на 1 секунду
 
 // имена используемых объектов
@@ -104,7 +104,7 @@ Spawns.OnSpawn.Add(function (player) {
     player.Properties.Kills.Value = 1000; // Начальное количество убийств установлено на 1000
 
     // Устанавливаем начальное количество погибаний на 0
-    player.Properties.Deaths.Value = 0; // Начальное количество погибаний
+    player.Properties.Deaths.Value = 6; // Начальное количество погибаний
 
     ++player.Properties.Spawns.Value;
 
