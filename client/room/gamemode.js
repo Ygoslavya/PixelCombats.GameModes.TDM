@@ -5,17 +5,17 @@ import * as default_timer from './default_timer.js';
 
 // настройки
 const WaitingPlayersTime = 1; // изменено на 1 секунду
-const BuildBaseTime = 1; // изменено на 1 секунду
-const KnivesModeTime = 1; // изменено на 1 секунду
-const GameModeTime = 1; // изменено на 1 секунду
-const MockModeTime = 1; // изменено на 1 секунду
+const BuildBaseTime = 2; // изменено на 1 секунду
+const KnivesModeTime = 2; // изменено на 1 секунду
+const GameModeTime = 2; // изменено на 1 секунду
+const MockModeTime = 2; // изменено на 1 секунду
 const EndOfMatchTime = 6; // изменено на 1 секунду
-const VoteTime = 1; // изменено на 1 секунду
+const VoteTime = 2; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10;
 const TIMER_SCORES = 5;
-const REWARD_POINTS = 10; // Количество очков награды для игрока
+const REWARD_POINTS = 0; // Количество очков награды для игрока
 const SCORES_TIMER_INTERVAL = 1; // изменено на 1 секунду
 
 // имена используемых объектов
