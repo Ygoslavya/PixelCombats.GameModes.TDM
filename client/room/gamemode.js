@@ -30,6 +30,7 @@ BreackGraph.PlayerBlockBoost = true;
 Properties.GetContext().GameModeName.Value = "GameModes/Team Dead Match";
 TeamsBalancer.IsAutoBalance = true;
 Ui.GetContext().MainTimerId.Value = mainTimer.Id;
+
 // Стандартные, команды:
 Teams.Add("Blue", "Teams/Blue", new Color(0, 0, 1, 0));
 Teams.Add("Red", "Teams/Red", new Color(1, 0, 0, 0));
@@ -44,193 +45,203 @@ RedTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 var MaxDeaths = Players.MaxCount * 1;
 Teams.Get("Red").Properties.Get("Deaths").Value = MaxDeaths;
 Teams.Get("Blue").Properties.Get("Deaths").Value = MaxDeaths;
+
 // Стандартные - лидерБорды:
 LeaderBoard.PlayerLeaderBoardValues = [
-        {
-                Value: "Kills",
-                DisplayName: "У",
-                ShortDisplayName: "У"
-        },
-        {
-                Value: "Deaths",
-                DisplayName: "С",
-                ShortDisplayName: "С"
-        },
-        {
-                Value: "Spawns",
-                DisplayName: "С",
-                ShortDisplayName: "С"
-        },
-        {
-                Value: "Scores",
-                DisplayName: "О",
-                ShortDisplayName: "О"
-        },
-        {
-                Value: "Status",
-                DisplayName: "С",
-                ShortDisplayName: "С"
-        }
-
+    {
+        Value: "Kills",
+        DisplayName: "У",
+        ShortDisplayName: "У"
+    },
+    {
+        Value: "Deaths",
+        DisplayName: "С",
+        ShortDisplayName: "С"
+    },
+    {
+        Value: "Spawns",
+        DisplayName: "С",
+        ShortDisplayName: "С"
+    },
+    {
+        Value: "Scores",
+        DisplayName: "О",
+        ShortDisplayName: "О"
+    },
+    {
+        Value: "Status",
+        DisplayName: "С",
+        ShortDisplayName: "С"
+    }
 ];
 LeaderBoard.TeamLeaderBoardValue = {
-        Value: "Deaths",
-        DisplayName: "Statistics\Deaths",
-        ShortDisplayName: "Statistics\Deaths"
+    Value: "Deaths",
+    DisplayName: "Statistics\Deaths",
+    ShortDisplayName: "Statistics\Deaths"
 };
+
 // Вес - команды, в лидерБорде:
-LeaderBoard.TeamWeightGetter.Set(function(Team) {
-        return Team.Properties.Get("Deaths").Value;
-});
-// Вес - игрока, в лидерБорде:
-LeaderBoard.PlayersWeightGetter.Set(function(Player) {
-        return Player.Properties.Get("Kills").Value;
+LeaderBoard.TeamWeightGetter.Set(function (Team) {
+    return Team.Properties.Get("Deaths").Value;
 });
 
-// Задаём, что выводить, в табе:
+// Вес - игрока, в лидерБорде:
+LeaderBoard.PlayersWeightGetter.Set(function (Player) {
+    return Player.Properties.Get("Kills").Value;
+});
+
+// Задаём, что выводить в табе:
 Ui.GetContext().TeamProp1.Value = { Team: "Blue", Prop: "Deaths" };
 Ui.GetContext().TeamProp2.Value = { Team: "Red", Prop: "Deaths" };
 
 // Параметр, который даёт 29 блоков:
-Teams.OnRequestJoinTeam.Add(function(Player,Team){
-  if (GameMode.Parameters.GetBool("Blocks29")) {
-Player.contextedProperties.StartBlocksCount.Value = 30;
-  }
-});
-// Задаём, зайти игроку - в команду:
-Teams.OnRequestJoinTeam.Add(function(Player,Team){Team.Add(Player);});
-// Задаём, заспавнится игроку - в команду: 
-Teams.OnPlayerChangeTeam.Add(function(Player){ Player.Spawns.Spawn()});
-
-// Делаем игроков, неуязвимыми - после спавна:
-var immortalityTimerName="immortality";
-Spawns.GetContext().OnSpawn.Add(function(Player){
-        Player.Properties.Immortality.Value=true;
-        timer=Player.Timers.Get(immortalityTimerName).Restart(1);
-});
-Timers.OnPlayerTimer.Add(function(Timer){
-        if(Timer.Id!=immortalityTimerName) return;
-        Timer.Player.Properties.Immortality.Value=false;
+Teams.OnRequestJoinTeam.Add(function (Player, Team) {
+    if (GameMode.Parameters.GetBool("Blocks29")) {
+        Player.contextedProperties.StartBlocksCount.Value = 30;
+    }
 });
 
-// После каждой - смерти игрока, отнимаем одну - смерть, в команде:
-Properties.OnPlayerProperty.Add(function(Context, Value) {
-        if (Value.Name !== "Deaths") return;
-        if (Context.Player.Team == null) return;
-        Context.Player.Team.Properties.Get("Deaths").Value--;
+// Задаём, зайти игроку в команду:
+Teams.OnRequestJoinTeam.Add(function (Player, Team) { Team.Add(Player); });
+// Задаём, заспавнится игроку в команду:
+Teams.OnPlayerChangeTeam.Add(function (Player) { Player.Spawns.Spawn() });
+
+// Делаем игроков неуязвимыми после спавна:
+var immortalityTimerName = "immortality";
+Spawns.GetContext().OnSpawn.Add(function (Player) {
+    Player.Properties.Immortality.Value = true;
+    timer = Player.Timers.Get(immortalityTimerName).Restart(1);
 });
-// Если у игрока - занулилились смерти, то завершаем игру:
-Properties.OnTeamProperty.Add(function(context, value) {
-        if (value.Name !== "Deaths") return;
-        if (value.Value <= 0) SetEndOfMatchMode();
+Timers.OnPlayerTimer.Add(function (Timer) {
+    if (Timer.Id != immortalityTimerName) return;
+    Timer.Player.Properties.Immortality.Value = false;
 });
 
-// Счётчик - спавнов:
-Spawns.OnSpawn.Add(function(Player) {
-        ++Player.Properties.Spawns.Value;
+// После каждой смерти игрока отнимаем одну смерть в команде:
+Properties.OnPlayerProperty.Add(function (Context, Value) {
+    if (Value.Name !== "Deaths") return;
+    if (Context.Player.Team == null) return;
+    Context.Player.Team.Properties.Get("Deaths").Value--;
 });
-// Счётчик - смертей:
-Damage.OnDeath.Add(function(Player) {
-  ++Player.Properties.Deaths.Value;
-});
-// Счётчик - убийствов:
-Damage.OnKill.Add(function(Player, Killed) {
-        if (Killed.Team != null && Killed.Team != Player.Team) {
-                ++Player.Properties.Kills.Value;
-                Player.Properties.Scores.Value += 100;
-        }
+// Если у игрока занулились смерти, то завершаем игру:
+Properties.OnTeamProperty.Add(function (context, value) {
+    if (value.Name !== "Deaths") return;
+    if (value.Value <= 0) SetEndOfMatchMode();
 });
 
-// Переключение - игровых, режимов:
-mainTimer.OnTimer.Add(function() {
-        switch (stateProp.Value) {
+// Счётчик спавнов:
+Spawns.OnSpawn.Add(function (Player) {
+    ++Player.Properties.Spawns.Value;
+});
+// Счётчик смертей:
+Damage.OnDeath.Add(function (Player) {
+    ++Player.Properties.Deaths.Value;
+});
+// Счётчик убийств:
+Damage.OnKill.Add(function (Player, Killed) {
+    if (Killed.Team != null && Killed.Team != Player.Team) {
+        ++Player.Properties.Kills.Value;
+        Player.Properties.Scores.Value += 100;
+    }
+});
+
+// Переключение игровых режимов:
+mainTimer.OnTimer.Add(function () {
+    switch (stateProp.Value) {
         case WaitingStateValue:
-                SetBuildMode();
-                break;
+            SetBuildMode();
+            break;
         case BuildModeStateValue:
-                SetGameMode();
-                break;
+            SetGameMode();
+            break;
         case GameStateValue:
-                SetEndOfMatchMode();
-                break;
-        case SetEndOfMatchModeStateValue:
-                SetVoteTime();
-                break;
-        }
+            SetEndOfMatchMode();
+            break;
+        case EndOfMatchStateValue:
+            SetVoteTime();
+            break; // Исправлено на правильное значение состояния
+    }
 });
 
-// Задаём, первое игровое - состояние игры:
+// Задаём первое игровое состояние игры:
 SetWaitingMode();
 
-// Состояние, игры:
+// Состояние игры:
 function SetWaitingMode() {
-        stateProp.Value = WaitingStateValue;
-        Ui.GetContext().Hint.Value = "РЕЖИМ НЕ ДОДЕЛАН";
-        Spawns.GetContext().Enable = false;
-        mainTimer.Restart(WaitingPlayersTime);
+    stateProp.Value = WaitingStateValue;
+    Ui.GetContext().Hint.Value = "РЕЖИМ НЕ ДОДЕЛАН";
+    Spawns.GetContext().Enable = false;
+    mainTimer.Restart(WaitingPlayersTime);
 }
 
-function SetBuildMode() 
-{
-        stateProp.Value = BuildModeStateValue;
-        Ui.GetContext().Hint.Value = "!Застраивайте базу - и !";
-        var inventory = Inventory.GetContext();
+function SetBuildMode() {
+    stateProp.Value = BuildModeStateValue;
+    Ui.GetContext().Hint.Value = "!Застраивайте базу - и !";
+    
+    var inventory = Inventory.GetContext();
+    inventory.Main.Value = false;
+    inventory.Secondary.Value = false;
+    inventory.Melee.Value = true;
+    inventory.Explosive.Value = false;
+    inventory.Build.Value = true;
+
+    mainTimer.Restart(BuildBaseTime);
+    
+    Spawns.GetContext().Enable = true; 
+}
+
+function SetGameMode() {
+    stateProp.Value = GameStateValue;
+    
+    Ui.GetContext().Hint.Value = "!Атакуйте врагов!";
+
+    var inventory = Inventory.GetContext();
+    
+    if (GameMode.Parameters.GetBool("OnlyKnives")) {
         inventory.Main.Value = false;
         inventory.Secondary.Value = false;
         inventory.Melee.Value = true;
         inventory.Explosive.Value = false;
-        inventory.Build.Value = true;
+        inventory.Build.Value = true; 
+    } else {
+        inventory.Main.Value = true; 
+        inventory.Secondary.Value = true; 
+        inventory.Melee.Value= true; 
+        inventory.Explosive.Value= true; 
+        inventory.Build.Value= true; 
+     }
 
-        mainTimer.Restart(BuildBaseTime);
-        Spawns.GetContext().Enable = true;
-        Spawns.GetContext().Spawn();
-        SpawnTeams();
-}
-function SetGameMode() 
-{
-        stateProp.Value = GameStateValue;
-        Ui.GetContext().Hint.Value = "!Атакуйте, врагов!";
-
-        var inventory = Inventory.GetContext();
-        if (GameMode.Parameters.GetBool("OnlyKnives")) {
-                inventory.Main.Value = false;
-                inventory.Secondary.Value = false;
-                inventory.Melee.Value = true;
-                inventory.Explosive.Value = false;
-                inventory.Build.Value = true;
-        } else {
-                inventory.Main.Value = true;
-                inventory.Secondary.Value = true;
-                inventory.Melee.Value = true;
-                inventory.Explosive.Value = true;
-                inventory.Build.Value = true;
-        }
-
-        mainTimer.Restart(GameModeTime);
-        Spawns.GetContext().Spawn();
-        SpawnTeams();
+     mainTimer.Restart(GameModeTime); 
+     SpawnTeams(); 
 }        
-function SetEndOfMatchMode() {
-        stateProp.Value = EndOfMatchStateValue;
-        Ui.GetContext().Hint.Value = "тест, матча!";
 
-        mainTimer.Restart(EndOfMatchTime);
-        Game.GameOver(LeaderBoard.GetTeams());
-        Spawns.GetContext().Enable = false;
-        Spawns.GetContext().Despawn();
+function SetEndOfMatchMode() {
+     stateProp.Value= EndOfMatchStateValue; 
+     Ui.GetContext().Hint.Value= "тест матча!"; 
+
+     mainTimer.Restart(EndOfMatchTime); 
+     
+     // Завершение игры и перезапуск через небольшой таймаут
+     Timers.SetTimeout(function() { 
+         Game.GameOver(LeaderBoard.GetTeams());
+         NewGame.RestartGame(); // Автоматический перезапуск игры
+     }, EndOfMatchTime * 1000); // Умножаем на 1000 для миллисекунд
 }
-NewGameVote.OnResult.Add(function(v) {
-        if (v.Result === null) return;
-        NewGame.RestartGame(v.Result);
+
+NewGameVote.OnResult.Add(function(v) { 
+     if (v.Result === null) return; 
+     NewGame.RestartGame(v.Result); 
 });
-function SetVoteTime() {
-        stateProp.Value = 'Vote';
-        NewGameVote.Start({
-                Variants: [{ MapId: 0 }],
-                Timer: 20
-        }, 3);
+
+function SetVoteTime() { 
+     stateProp.Value= 'Vote'; 
+     NewGameVote.Start({ 
+         Variants: [{ MapId: 0 }], 
+         Timer: 20 
+     }, 3); 
 }
-function SpawnTeams() {
-        var Spawns = Teams.Spawn();
-         Spawns.GetContext().Spawn();        
-    } 
+
+function SpawnTeams() { 
+     var Spawns= Teams.Spawn();  
+     Spawns.GetContext().Spawn();        
+}
