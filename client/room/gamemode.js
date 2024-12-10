@@ -106,7 +106,7 @@ Teams.OnPlayerChangeTeam.Add(function(Player){ Player.Spawns.Spawn()});
 var immortalityTimerName="immortality";
 Spawns.GetContext().OnSpawn.Add(function(Player){
         Player.Properties.Immortality.Value=true;
-        timer=Player.Timers.Get(immortalityTimerName).Restart(6);
+        timer=Player.Timers.Get(immortalityTimerName).Restart(1);
 });
 Timers.OnPlayerTimer.Add(function(Timer){
         if(Timer.Id!=immortalityTimerName) return;
@@ -212,7 +212,7 @@ function SetGameMode()
 }        
 function SetEndOfMatchMode() {
         stateProp.Value = EndOfMatchStateValue;
-        Ui.GetContext().Hint.Value = "!Конец, матча!";
+        Ui.GetContext().Hint.Value = "тест, матча!";
 
         mainTimer.Restart(EndOfMatchTime);
         Game.GameOver(LeaderBoard.GetTeams());
