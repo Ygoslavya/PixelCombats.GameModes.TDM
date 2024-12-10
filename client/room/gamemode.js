@@ -55,6 +55,10 @@ const redTeam = teams.create_team_red();
 blueTeam.Build.BlocksSet.Value = BuildBlocksSet.Blue;
 redTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 
+// устанавливаем начальные очки для команд
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = 0; // Красная команда начинает с 0 очков
+blueTeam.Properties.Get(SCORES_PROP_NAME).Value = 1000; // Синяя команда начинает с 1000 очков
+
 // настраиваем параметры, которые нужно выводить в лидерборде
 LeaderBoard.PlayerLeaderBoardValues = [
     new DisplayValueHeader(KILLS_PROP_NAME, "Statistics/Kills", "Statistics/KillsShort"),
@@ -71,10 +75,6 @@ LeaderBoard.TeamWeightGetter.Set(function (team) {
 LeaderBoard.PlayersWeightGetter.Set(function (player) {
     return player.Properties.Get(SCORES_PROP_NAME).Value;
 });
-
-// отображаем изначально нули в очках команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = 0;
-blueTeam.Properties.Get(SCORES_PROP_NAME).Value = 0;
 
 // отображаем значения вверху экрана
 Ui.GetContext().TeamProp1.Value = { Team: "Blue", Prop: SCORES_PROP_NAME };
@@ -100,16 +100,15 @@ Spawns.OnSpawn.Add(function (player) {
     if (stateProp.Value == MockModeStateValue) return;
 
     // Устанавливаем начальные значения для очков и убийств
-    player.Properties.Scores.Value = 1000; // Начальное количество очков
-    player.Properties.Kills.Value = 1000; // Начальное количество убийств
+    player.Properties.Scores.Value += REWARD_POINTS; // Начальное количество очков с учетом награды при спавне
+    player.Properties.Kills.Value = 0; // Начальное количество убийств
 
-    // Устанавливаем начальное количество погибаний на 1000
-    player.Properties.Deaths.Value = 1000; // Начальное количество погибаний
+    // Устанавливаем начальное количество погибаний на 0
+    player.Properties.Deaths.Value = 0; // Начальное количество погибаний
 
     ++player.Properties.Spawns.Value;
 
     // Начисляем награду при спавне
-    player.Properties.Scores.Value += REWARD_POINTS; // Добавляем очки награды при спавне
 });
 
 // обработчик смертей
@@ -137,7 +136,7 @@ Damage.OnKill.Add(function (player, killed) {
 scores_timer.OnTimer.Add(function () {
     for (const player of Players.All) {
         if (player.Team == null) continue; // если вне команд то не начисляем ничего по таймеру
-        
+
         player.Properties.Scores.Value += TIMER_SCORES; // Добавляем очки за время игры
 
         // Начисляем награду каждые X секунд
@@ -182,7 +181,7 @@ function SetWaitingMode() {
 function SetBuildMode() {
     stateProp.Value = BuildModeStateValue;
     Ui.GetContext().Hint.Value = "Hint/BuildBase";
-    
+
     var inventory = Inventory.GetContext();
     inventory.Main.Value = false;
     inventory.Secondary.Value = false;
