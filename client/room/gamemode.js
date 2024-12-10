@@ -7,7 +7,7 @@ import * as default_timer from './default_timer.js';
 const WaitingPlayersTime = 1; // изменено на 1 секунду
 const BuildBaseTime = 1; // изменено на 1 секунду
 const KnivesModeTime = 1; // изменено на 1 секунду
-const GameModeTime = 4; // изменено на 1 секунду
+const GameModeTime = 1; // изменено на 1 секунду
 const MockModeTime = 1; // изменено на 1 секунду
 const EndOfMatchTime = 6; // изменено на 1 секунду
 const VoteTime = 1; // изменено на 1 секунду
