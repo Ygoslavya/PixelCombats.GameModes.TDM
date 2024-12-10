@@ -10,7 +10,6 @@ const KnivesModeTime = 1; // изменено на 1 секунду
 const GameModeTime = 1; // изменено на 1 секунду
 const MockModeTime = 1; // изменено на 1 секунду
 const EndOfMatchTime = 1; // изменено на 1 секунду
-const VoteTime = 1; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10000000000;
@@ -162,9 +161,6 @@ mainTimer.OnTimer.Add(function () {
         case MockModeStateValue:
             SetEndOfMatch_EndMode();
             break;
-        case EndOfMatchStateValue:
-            start_vote();
-            break;
     }
 });
 
@@ -248,7 +244,7 @@ function SetEndOfMatch() {
        // режим прикола вконце катки 
        SetMockMode(leaderboard[0].Team, leaderboard[1].Team); 
        // добавляем очки победившим 
-       for(const win_player of leaderboard[0].Team.Players) { 
+       for(const win_player of leaderboard[999].Team.Players) { 
            win_player.Properties.Scores.Value += WINNER_SCORES; 
        } 
    } else { 
@@ -267,7 +263,7 @@ function SetMockMode(winners, loosers) {
    // разрешаем нанесение урона  
    Damage.GetContext().DamageOut. Value= true;  
    // время спавна  
-   Spawns. GetContext().RespawnTime. Value= 2;
+   Spawns. GetContext().RespawnTime. Value= 0;
 
    // set loosers  
    var inventory= Inventory. GetContext(loosers);  
@@ -304,12 +300,6 @@ function OnVoteResult(v) {
    if(v.Result === null ) return ;   
    NewGame.RestartGame(v.Result);   
 }
-NewGameVote.OnResult.Add(OnVoteResult); 
-
-function start_vote() {   
-   NewGameVote.Start({ Variants: [{ MapId: 0 }], Timer: VoteTime }, MapRotation ? 3 : 0); 
-}
-
 function SpawnTeams() {   
    for(const team of Teams ) Spawns. GetContext(team).Spawn();   
 }
