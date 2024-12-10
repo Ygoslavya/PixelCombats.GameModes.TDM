@@ -41,7 +41,7 @@ BlueTeam.Build.BlocksSet.Value = BuildBlocksSet.Blue;
 RedTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 
 // Максимальные - смерти, команд:
-var MaxDeaths = Players.MaxCount * 5;
+var MaxDeaths = Players.MaxCount * 1;
 Teams.Get("Red").Properties.Get("Deaths").Value = MaxDeaths;
 Teams.Get("Blue").Properties.Get("Deaths").Value = MaxDeaths;
 // Стандартные - лидерБорды:
@@ -165,7 +165,7 @@ SetWaitingMode();
 // Состояние, игры:
 function SetWaitingMode() {
         stateProp.Value = WaitingStateValue;
-        Ui.GetContext().Hint.Value = "Ожидание, игроков...";
+        Ui.GetContext().Hint.Value = "РЕЖИМ НЕ ДОДЕЛАН";
         Spawns.GetContext().Enable = false;
         mainTimer.Restart(WaitingPlayersTime);
 }
@@ -173,7 +173,7 @@ function SetWaitingMode() {
 function SetBuildMode() 
 {
         stateProp.Value = BuildModeStateValue;
-        Ui.GetContext().Hint.Value = "!Застраивайте базу - и атакуйте, врагов!";
+        Ui.GetContext().Hint.Value = "!Застраивайте базу - и !";
         var inventory = Inventory.GetContext();
         inventory.Main.Value = false;
         inventory.Secondary.Value = false;
