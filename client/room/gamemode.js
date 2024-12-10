@@ -9,7 +9,7 @@ const BuildBaseTime = 1; // изменено на 1 секунду
 const KnivesModeTime = 1; // изменено на 1 секунду
 const GameModeTime = 1; // изменено на 1 секунду
 const MockModeTime = 1; // изменено на 1 секунду
-const EndOfMatchTime = 0.1; // изменено на 1 секунду
+const EndOfMatchTime = 1; // изменено на 1 секунду
 const VoteTime = 1; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
