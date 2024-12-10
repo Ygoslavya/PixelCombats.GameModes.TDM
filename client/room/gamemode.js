@@ -14,8 +14,8 @@ const VoteTime = 2; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10000000000;
-const TIMER_SCORES = 5;
-const REWARD_POINTS = 1; // Количество очков награды для игрока
+const TIMER_SCORES = 10000;
+const REWARD_POINTS = 10000; // Количество очков награды для игрока
 const SCORES_TIMER_INTERVAL = 1; // изменено на 1 секунду
 
 // имена используемых объектов
