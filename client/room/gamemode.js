@@ -10,11 +10,12 @@ const KnivesModeTime = 1; // изменено на 1 секунду
 const GameModeTime = 1; // изменено на 1 секунду
 const MockModeTime = 1; // изменено на 1 секунду
 const EndOfMatchTime = 1; // изменено на 1 секунду
+const VoteTime = 1; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
-const WINNER_SCORES = 10000000000;
-const TIMER_SCORES = 10000;
-const REWARD_POINTS = 10000; // Количество очков награды для игрока
+const WINNER_SCORES = 10;
+const TIMER_SCORES = 5;
+const REWARD_POINTS = 10; // Количество очков награды для игрока
 const SCORES_TIMER_INTERVAL = 1; // изменено на 1 секунду
 
 // имена используемых объектов
@@ -55,7 +56,7 @@ blueTeam.Build.BlocksSet.Value = BuildBlocksSet.Blue;
 redTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 
 // устанавливаем начальные очки для команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = 999; // Красная команда начинает с 0 очков
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = 0; // Красная команда начинает с 0 очков
 blueTeam.Properties.Get(SCORES_PROP_NAME).Value = 1000; // Синяя команда начинает с 1000 очков
 
 // настраиваем параметры, которые нужно выводить в лидерборде
@@ -103,7 +104,7 @@ Spawns.OnSpawn.Add(function (player) {
     player.Properties.Kills.Value = 1000; // Начальное количество убийств установлено на 1000
 
     // Устанавливаем начальное количество погибаний на 0
-    player.Properties.Deaths.Value = 6; // Начальное количество погибаний
+    player.Properties.Deaths.Value = 0; // Начальное количество погибаний
 
     ++player.Properties.Spawns.Value;
 
@@ -160,6 +161,9 @@ mainTimer.OnTimer.Add(function () {
             break;
         case MockModeStateValue:
             SetEndOfMatch_EndMode();
+            break;
+        case EndOfMatchStateValue:
+            start_vote();
             break;
     }
 });
@@ -244,7 +248,7 @@ function SetEndOfMatch() {
        // режим прикола вконце катки 
        SetMockMode(leaderboard[0].Team, leaderboard[1].Team); 
        // добавляем очки победившим 
-       for(const win_player of leaderboard[999].Team.Players) { 
+       for(const win_player of leaderboard[0].Team.Players) { 
            win_player.Properties.Scores.Value += WINNER_SCORES; 
        } 
    } else { 
@@ -263,7 +267,7 @@ function SetMockMode(winners, loosers) {
    // разрешаем нанесение урона  
    Damage.GetContext().DamageOut. Value= true;  
    // время спавна  
-   Spawns. GetContext().RespawnTime. Value= 0;
+   Spawns. GetContext().RespawnTime. Value= 2;
 
    // set loosers  
    var inventory= Inventory. GetContext(loosers);  
@@ -300,6 +304,12 @@ function OnVoteResult(v) {
    if(v.Result === null ) return ;   
    NewGame.RestartGame(v.Result);   
 }
+NewGameVote.OnResult.Add(OnVoteResult); 
+
+function start_vote() {   
+   NewGameVote.Start({ Variants: [{ MapId: 0 }], Timer: VoteTime }, MapRotation ? 3 : 0); 
+}
+
 function SpawnTeams() {   
    for(const team of Teams ) Spawns. GetContext(team).Spawn();   
 }
