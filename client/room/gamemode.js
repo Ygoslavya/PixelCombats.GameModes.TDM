@@ -9,8 +9,8 @@ const BuildBaseTime = 2; // изменено на 1 секунду
 const KnivesModeTime = 2; // изменено на 1 секунду
 const GameModeTime = 2; // изменено на 1 секунду
 const MockModeTime = 2; // изменено на 1 секунду
-const EndOfMatchTime = 6; // изменено на 1 секунду
-const VoteTime = 2; // изменено на 1 секунду
+const EndOfMatchTime = 1; // изменено на 1 секунду
+const VoteTime = 1; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10000000000;
