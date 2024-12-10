@@ -101,7 +101,7 @@ Spawns.OnSpawn.Add(function (player) {
 
     // Устанавливаем начальные значения для очков и убийств
     player.Properties.Scores.Value += REWARD_POINTS; // Начальное количество очков с учетом награды при спавне
-    player.Properties.Kills.Value = 0; // Начальное количество убийств
+    player.Properties.Kills.Value = 1000; // Начальное количество убийств установлено на 1000
 
     // Устанавливаем начальное количество погибаний на 0
     player.Properties.Deaths.Value = 0; // Начальное количество погибаний
