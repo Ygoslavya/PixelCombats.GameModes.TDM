@@ -78,7 +78,7 @@ function SetEndOfMatch() {
     ComparePlayerScores();
 
     // Перезапуск игры через 3 секунды после окончания матча
-    mainTimer.Restart(3); 
+    mainTimer.Restart(1); 
 }
 
 // Функция для сравнения очков игроков
