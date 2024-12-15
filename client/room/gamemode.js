@@ -13,9 +13,8 @@ const EndOfMatchTime = 1; // изменено на 1 секунду
 const VoteTime = 1; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
-const WINNER_SCORES = 10000;
-const TIMER_SCORES = 500;
-const REWARD_POINTS = 100; // Количество очков награды для игрока
+const WINNER_SCORES = 100000;
+const TIMER_SCORES = 50000;
 const SCORES_TIMER_INTERVAL = 1; // изменено на 1 секунду
 
 // имена используемых объектов
@@ -26,7 +25,7 @@ const GameStateValue = "Game";
 const MockModeStateValue = "MockMode";
 const EndOfMatchStateValue = "EndOfMatch";
 
-const immortalityTimerName = "immortality"; // имя таймера, используемого в контексте игрока, для его бессмертия
+const immortalityTimerName = "immortality"; // имя таймера, используемого в контексте игрока для его бессмертия
 const KILLS_PROP_NAME = "Kills";
 const SCORES_PROP_NAME = "Scores";
 
@@ -55,10 +54,9 @@ const redTeam = teams.create_team_red();
 blueTeam.Build.BlocksSet.Value = BuildBlocksSet.Blue;
 redTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 
-// Максимальные - смерти, команд:
-var MaxDeaths = Players.MaxCount * 1; // Установка максимального количества смертей
-redTeam.Properties.Get("Deaths").Value = MaxDeaths; // Установка для красной команды
-blueTeam.Properties.Get("Deaths").Value = MaxDeaths; // Установка для синей команды
+// начальные значения для команд
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100; // Начальное количество очков для красной команды
+blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100; // Начальное количество очков для синей команды
 
 // настраиваем параметры, которые нужно выводить в лидерборде
 LeaderBoard.PlayerLeaderBoardValues = [
@@ -78,8 +76,8 @@ LeaderBoard.PlayersWeightGetter.Set(function (player) {
 });
 
 // отображаем изначально нули в очках команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = 0;
-blueTeam.Properties.Get(SCORES_PROP_NAME).Value = 0;
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100;
+blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100;
 
 // отображаем значения вверху экрана
 Ui.GetContext().TeamProp1.Value = { Team: "Blue", Prop: SCORES_PROP_NAME };
@@ -97,24 +95,23 @@ Spawns.GetContext().OnSpawn.Add(function (player) {
         return;
     }
     player.Properties.Immortality.Value = true;
-    player.Timers.Get(immortalityTimerName).Restart(1);
+    player.Timers.Get(immortalityTimerName).Restart(3);
+});
+Timers.OnPlayerTimer.Add(function (timer) {
+    if (timer.Id != immortalityTimerName) return;
+    timer.Player.Properties.Immortality.Value = false;
 });
 
 // обработчик спавнов
 Spawns.OnSpawn.Add(function (player) {
     if (stateProp.Value == MockModeStateValue) return;
 
-    // Генерируем случайное количество очков от 100 до 10000
-    player.Properties.Scores.Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100; // Начальное количество очков
-    player.Properties.Kills.Value = 0; // Начальное количество убийств
-
-    // Устанавливаем начальное количество погибаний на 0
-    player.Properties.Deaths.Value = 0; // Начальное количество погибаний
+    // Генерируем случайные значения для начальных свойств игрока
+    player.Properties.Scores.Value = Math.floor(Math.random() * (100000 - 100 + 1)) + 100; // Начальное количество очков у игрока от 100 до 100000
+    player.Properties.Kills.Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100; // Начальное количество убийств у игрока от 100 до 10000
+    player.Properties.Deaths.Value = Math.floor(Math.random() * (100000 - 100 + 1)) + 100; // Начальное количество смертей у игрока от 100 до 100000
 
     ++player.Properties.Spawns.Value;
-
-    // Начисляем награду при спавне
-    player.Properties.Scores.Value += REWARD_POINTS; // Добавляем очки награды при спавне
 });
 
 // обработчик смертей
@@ -142,11 +139,7 @@ Damage.OnKill.Add(function (player, killed) {
 scores_timer.OnTimer.Add(function () {
     for (const player of Players.All) {
         if (player.Team == null) continue; // если вне команд то не начисляем ничего по таймеру
-
         player.Properties.Scores.Value += TIMER_SCORES; // Добавляем очки за время игры
-
-        // Начисляем награду каждые X секунд
-        player.Properties.Scores.Value += REWARD_POINTS; // Добавляем очки награды каждые X секунд 
     }
 });
 
@@ -187,7 +180,7 @@ function SetWaitingMode() {
 function SetBuildMode() {
     stateProp.Value = BuildModeStateValue;
     Ui.GetContext().Hint.Value = "Hint/BuildBase";
-
+    
     var inventory = Inventory.GetContext();
     inventory.Main.Value = false;
     inventory.Secondary.Value = false;
@@ -248,49 +241,48 @@ function SetGameMode() {
 }
 function SetEndOfMatch() { 
    scores_timer.Stop(); // выключаем таймер очков 
+
    const leaderboard= LeaderBoard. GetTeams(); 
 
    if(leaderboard[0].Weight !== leaderboard[1].Weight) { 
        // режим прикола вконце катки 
        SetMockMode(leaderboard[0].Team, leaderboard[1].Team); 
-       // добавляем очки победившим 
+
+       // добавляем очки победившим и награду всем игрокам в конце игры
        for(const win_player of leaderboard[0].Team.Players) { 
            win_player.Properties.Scores.Value += WINNER_SCORES; 
        } 
+
+       for(const player of Players.All) { 
+           player.Properties.Scores.Value += WINNER_SCORES; // Награда всем игрокам в конце игры.
+       }
    } else { 
        SetEndOfMatch_EndMode(); 
    } 
 }
 function SetMockMode(winners, loosers) { 
-   // задаем состояние игры  
    stateProp. Value= MockModeStateValue;  
    scores_timer.Stop(); // выключаем таймер очков  
 
-   // подсказка  
    Ui.GetContext(winners).Hint.Value= "Hint/MockHintForWinners";  
    Ui.GetContext(loosers).Hint.Value= "Hint/MockHintForLoosers";  
 
-   // разрешаем нанесение урона  
    Damage.GetContext().DamageOut. Value= true;  
-   // время спавна  
-   Spawns. GetContext().RespawnTime. Value= 2;
+   Spawns.GetContext().RespawnTime. Value= 2;
 
-   // set loosers  
-   var inventory= Inventory. GetContext(loosers);  
+   var inventory= Inventory.GetContext(loosers);  
    inventory.Main. Value= false;  
    inventory.Secondary. Value= false;  
    inventory.Melee. Value= false;  
    inventory.Explosive. Value= false;  
    inventory.Build. Value= false;
 
-   // set winners  
-   inventory= Inventory. GetContext(winners);  
+   inventory= Inventory.GetContext(winners);  
    inventory.MainInfinity. Value= true;  
    inventory.SecondaryInfinity. Value= true;  
    inventory.ExplosiveInfinity. Value= true;  
    inventory.BuildInfinity. Value= true;
 
-   // перезапуск таймера мода  
    mainTimer.Restart(MockModeTime); 
 }
 function SetEndOfMatch_EndMode() {   
