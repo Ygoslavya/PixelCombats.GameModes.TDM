@@ -25,7 +25,7 @@ const GameStateValue = "Game";
 const MockModeStateValue = "MockMode";
 const EndOfMatchStateValue = "EndOfMatch";
 
-const immortalityTimerName = "immortality"; // имя таймера, используемого в контексте игрока для его бессмертия
+const immortalityTimerName = "immortality"; // имя таймера для бессмертия игрока
 const KILLS_PROP_NAME = "Kills";
 const SCORES_PROP_NAME = "Scores";
 
@@ -58,7 +58,7 @@ redTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100; // Начальное количество очков для красной команды
 blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100; // Начальное количество очков для синей команды
 
-// настраиваем параметры, которые нужно выводить в лидерборде
+// настраиваем параметры для лидерборда
 LeaderBoard.PlayerLeaderBoardValues = [
     new DisplayValueHeader(KILLS_PROP_NAME, "Statistics/Kills", "Statistics/KillsShort"),
     new DisplayValueHeader("Deaths", "Statistics/Deaths", "Statistics/DeathsShort"),
@@ -140,8 +140,17 @@ scores_timer.OnTimer.Add(function () {
     for (const player of Players.All) {
         if (player.Team == null) continue; // если вне команд то не начисляем ничего по таймеру
         player.Properties.Scores.Value += TIMER_SCORES; // Добавляем очки за время игры
+        
+        // Выдача сундука каждому игроку за время игры 
+        GiveChestsToPlayers(player);
     }
 });
+
+// функция выдачи сундуков игрокам за время игры 
+function GiveChestsToPlayers(player) {
+    Ui.GetContext(player).Hint.Value += ` You received a treasure chest!`;
+    player.Inventory.AddItem('chest'); // Пример добавления сундука в инвентарь игрока.
+}
 
 // таймер переключения состояний
 mainTimer.OnTimer.Add(function () {
@@ -252,16 +261,9 @@ function SetEndOfMatch() {
        for(const win_player of leaderboard[0].Team.Players) { 
            win_player.Properties.Scores.Value += WINNER_SCORES; 
 
-           // Выдача награды в виде сундука или медали случайным образом после окончания боя.
-           const rewardType = Math.random() < 0.5 ? 'chest' : 'medal'; // Случайный выбор награды
-
-           if(rewardType === 'chest') {
-               Ui.GetContext(win_player).Hint.Value += ` You received a treasure chest!`;
-               // Логика добавления сундука в инвентарь игрока может быть добавлена здесь.
-           } else {
-               Ui.GetContext(win_player).Hint.Value += ` You received a golden medal!`;
-               // Логика добавления медали в инвентарь игрока может быть добавлена здесь.
-           }
+           // Всегда выдаем медаль всем победителям.
+           Ui.GetContext(win_player).Hint.Value += ` You received a golden medal!`;
+           win_player.Inventory.AddItem('medal'); // Пример добавления медали в инвентарь.
        } 
 
        for(const player of Players.All) { 
