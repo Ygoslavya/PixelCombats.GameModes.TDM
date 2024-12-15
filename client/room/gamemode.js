@@ -15,8 +15,6 @@ const KILL_SCORES = 5; // Очки за убийство
 const WINNER_SCORES = 10; // Очки за победу
 const CHEST_SCORES = 10; // Очки за сундук
 
-const KILLS_INITIAL_VALUE = 1000; // Начальное количество убийств
-const SCORES_INITIAL_VALUE = 1000999; // Начальное количество очков
 
 const KILLS_INCREMENT = 1000; // Убийства за секунду
 const SCORES_INCREMENT = 1000; // Очки за секунду
