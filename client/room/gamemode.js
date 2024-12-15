@@ -180,7 +180,7 @@ function SetWaitingMode() {
 function SetBuildMode() {
     stateProp.Value = BuildModeStateValue;
     Ui.GetContext().Hint.Value = "Hint/BuildBase";
-    
+
     var inventory = Inventory.GetContext();
     inventory.Main.Value = false;
     inventory.Secondary.Value = false;
@@ -251,6 +251,17 @@ function SetEndOfMatch() {
        // добавляем очки победившим и награду всем игрокам в конце игры
        for(const win_player of leaderboard[0].Team.Players) { 
            win_player.Properties.Scores.Value += WINNER_SCORES; 
+
+           // Выдача награды в виде сундука или медали случайным образом после окончания боя.
+           const rewardType = Math.random() < 0.5 ? 'chest' : 'medal'; // Случайный выбор награды
+
+           if(rewardType === 'chest') {
+               Ui.GetContext(win_player).Hint.Value += ` You received a treasure chest!`;
+               // Логика добавления сундука в инвентарь игрока может быть добавлена здесь.
+           } else {
+               Ui.GetContext(win_player).Hint.Value += ` You received a golden medal!`;
+               // Логика добавления медали в инвентарь игрока может быть добавлена здесь.
+           }
        } 
 
        for(const player of Players.All) { 
