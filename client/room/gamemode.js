@@ -13,8 +13,8 @@ const EndOfMatchTime = 1; // изменено на 1 секунду
 const VoteTime = 1; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
-const WINNER_SCORES = 100000;
-const TIMER_SCORES = 50000;
+const WINNER_SCORES = 10;
+const TIMER_SCORES = 5;
 const SCORES_TIMER_INTERVAL = 1; // изменено на 1 секунду
 
 // имена используемых объектов
@@ -255,11 +255,23 @@ function SetEndOfMatch() {
 
        for(const player of Players.All) { 
            player.Properties.Scores.Value += WINNER_SCORES; // Награда всем игрокам в конце игры.
+           awardMedal(player); // Выдаем медаль каждому игроку.
        }
    } else { 
        SetEndOfMatch_EndMode(); 
    } 
 }
+
+// Функция для выдачи медали игроку по случайному принципу.
+function awardMedal(player) {
+   const medalsList = ["Gold Medal", "Silver Medal", "Bronze Medal", "Participation Medal"];
+   const randomIndex = Math.floor(Math.random() * medalsList.length);
+   const awardedMedal = medalsList[randomIndex];
+
+   // Здесь можно добавить логику для отображения медали или сохранения её в свойствах игрока.
+   console.log(`${player.Name} has been awarded a ${awardedMedal}`);
+}
+
 function SetMockMode(winners, loosers) { 
    stateProp. Value= MockModeStateValue;  
    scores_timer.Stop(); // выключаем таймер очков  
