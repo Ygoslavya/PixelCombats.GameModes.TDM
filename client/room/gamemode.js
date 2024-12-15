@@ -108,7 +108,7 @@ function SetEndOfMatch() {
     
     ComparePlayerScores();
     
-    mainTimer.Restart(3); 
+    mainTimer.Restart(1); 
 }
 
 function ComparePlayerScores() {
