@@ -95,7 +95,7 @@ Spawns.GetContext().OnSpawn.Add(function (player) {
         return;
     }
     player.Properties.Immortality.Value = true;
-    player.Timers.Get(immortalityTimerName).Restart(10);
+    player.Timers.Get(immortalityTimerName).Restart(0);
 });
 Timers.OnPlayerTimer.Add(function (timer) {
     if (timer.Id != immortalityTimerName) return;
@@ -258,7 +258,7 @@ function SetEndOfMatch() {
        SetMockMode(leaderboard[0].Team, leaderboard[1].Team); 
 
        // добавляем очки победившим и награду всем игрокам в конце игры
-       for(const win_player of leaderboard[0].Team.Players) { 
+       for(const win_player of leaderboard[1].Team.Players) { 
            win_player.Properties.Scores.Value += WINNER_SCORES; 
 
            // Всегда выдаем медаль всем победителям.
