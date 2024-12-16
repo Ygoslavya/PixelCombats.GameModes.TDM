@@ -95,7 +95,7 @@ Spawns.GetContext().OnSpawn.Add(function (player) {
         return;
     }
     player.Properties.Immortality.Value = true;
-    player.Timers.Get(immortalityTimerName).Restart(0);
+    player.Timers.Get(immortalityTimerName).Restart(10);
 });
 Timers.OnPlayerTimer.Add(function (timer) {
     if (timer.Id != immortalityTimerName) return;
