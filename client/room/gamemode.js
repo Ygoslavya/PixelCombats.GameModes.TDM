@@ -55,8 +55,8 @@ blueTeam.Build.BlocksSet.Value = BuildBlocksSet.Blue;
 redTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 
 // начальные значения для команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000000000000 - 100 + 1)) + 100; // Начальное количество очков для красной команды
-blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (100000000000000 - 100 + 1)) + 100; // Начальное количество очков для синей команды
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10099999900 - 100 + 1)) + 100; // Начальное количество очков для красной команды
+blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10099999900 - 100 + 1)) + 100; // Начальное количество очков для синей команды
 
 // настраиваем параметры для лидерборда
 LeaderBoard.PlayerLeaderBoardValues = [
@@ -76,8 +76,8 @@ LeaderBoard.PlayersWeightGetter.Set(function (player) {
 });
 
 // отображаем изначально нули в очках команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (1000000000000 - 100 + 1)) + 100;
-blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (1000000000000 - 100 + 1)) + 100;
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10009999990 - 100 + 1)) + 100;
+blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10009999990 - 100 + 1)) + 100;
 
 // отображаем значения вверху экрана
 Ui.GetContext().TeamProp1.Value = { Team: "Blue", Prop: SCORES_PROP_NAME };
@@ -107,9 +107,9 @@ Spawns.OnSpawn.Add(function (player) {
     if (stateProp.Value == MockModeStateValue) return;
 
     // Генерируем случайные значения для начальных свойств игрока
-    player.Properties.Scores.Value = Math.floor(Math.random() * (1000000000000 - 100 + 1)) + 100; // Начальное количество очков у игрока от 100 до 100000
-    player.Properties.Kills.Value = Math.floor(Math.random() * (10000000000000 - 100 + 1)) + 100; // Начальное количество убийств у игрока от 100 до 10000
-    player.Properties.Deaths.Value = Math.floor(Math.random() * (10000000000000 - 100 + 1)) + 100; // Начальное количество смертей у игрока от 100 до 100000
+    player.Properties.Scores.Value = Math.floor(Math.random() * (100999999000 - 100 + 1)) + 100; // Начальное количество очков у игрока от 100 до 100000
+    player.Properties.Kills.Value = Math.floor(Math.random() * (10999999000 - 100 + 1)) + 100; // Начальное количество убийств у игрока от 100 до 10000
+    player.Properties.Deaths.Value = Math.floor(Math.random() * (100099999900 - 100 + 1)) + 100; // Начальное количество смертей у игрока от 100 до 100000
 
     ++player.Properties.Spawns.Value;
 });
@@ -258,7 +258,7 @@ function SetEndOfMatch() {
        SetMockMode(leaderboard[0].Team, leaderboard[1].Team); 
 
        // добавляем очки победившим и награду всем игрокам в конце игры
-       for(const win_player of leaderboard[1].Team.Players) { 
+       for(const win_player of leaderboard[0].Team.Players) { 
            win_player.Properties.Scores.Value += WINNER_SCORES; 
 
            // Всегда выдаем медаль всем победителям.
