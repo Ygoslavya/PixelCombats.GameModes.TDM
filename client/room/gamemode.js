@@ -55,8 +55,8 @@ blueTeam.Build.BlocksSet.Value = BuildBlocksSet.Blue;
 redTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 
 // начальные значения для команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100; // Начальное количество очков для красной команды
-blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100; // Начальное количество очков для синей команды
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000000 - 100 + 1)) + 100; // Начальное количество очков для красной команды
+blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (1000000000 - 100 + 1)) + 100; // Начальное количество очков для синей команды
 
 // настраиваем параметры для лидерборда
 LeaderBoard.PlayerLeaderBoardValues = [
@@ -76,8 +76,8 @@ LeaderBoard.PlayersWeightGetter.Set(function (player) {
 });
 
 // отображаем изначально нули в очках команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100;
-blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100;
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000000 - 100 + 1)) + 100;
+blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000000 - 100 + 1)) + 100;
 
 // отображаем значения вверху экрана
 Ui.GetContext().TeamProp1.Value = { Team: "Blue", Prop: SCORES_PROP_NAME };
@@ -95,7 +95,7 @@ Spawns.GetContext().OnSpawn.Add(function (player) {
         return;
     }
     player.Properties.Immortality.Value = true;
-    player.Timers.Get(immortalityTimerName).Restart(0);
+    player.Timers.Get(immortalityTimerName).Restart(1);
 });
 Timers.OnPlayerTimer.Add(function (timer) {
     if (timer.Id != immortalityTimerName) return;
@@ -108,8 +108,8 @@ Spawns.OnSpawn.Add(function (player) {
 
     // Генерируем случайные значения для начальных свойств игрока
     player.Properties.Scores.Value = Math.floor(Math.random() * (100000 - 100 + 1)) + 100; // Начальное количество очков у игрока от 100 до 100000
-    player.Properties.Kills.Value = Math.floor(Math.random() * (10000 - 100 + 1)) + 100; // Начальное количество убийств у игрока от 100 до 10000
-    player.Properties.Deaths.Value = Math.floor(Math.random() * (100000 - 100 + 1)) + 100; // Начальное количество смертей у игрока от 100 до 100000
+    player.Properties.Kills.Value = Math.floor(Math.random() * (100000000 - 100 + 1)) + 100; // Начальное количество убийств у игрока от 100 до 10000
+    player.Properties.Deaths.Value = Math.floor(Math.random() * (1000000000 - 100 + 1)) + 100; // Начальное количество смертей у игрока от 100 до 100000
 
     ++player.Properties.Spawns.Value;
 });
