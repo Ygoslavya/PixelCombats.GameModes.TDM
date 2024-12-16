@@ -6,8 +6,11 @@ import * as default_timer from './default_timer.js';
 // настройки
 const WaitingPlayersTime = 1; // изменено на 1 секунду
 const BuildBaseTime = 1; // изменено на 1 секунду
+const KnivesModeTime = 1; // изменено на 1 секунду
 const GameModeTime = 1; // изменено на 1 секунду
+const MockModeTime = 1; // изменено на 1 секунду
 const EndOfMatchTime = 1; // изменено на 1 секунду
+const VoteTime = 1; // изменено на 1 секунду
 
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10000000000;
@@ -17,7 +20,9 @@ const SCORES_TIMER_INTERVAL = 1; // изменено на 1 секунду
 // имена используемых объектов
 const WaitingStateValue = "Waiting";
 const BuildModeStateValue = "BuildMode";
+const KnivesModeStateValue = "KnivesMode";
 const GameStateValue = "Game";
+const MockModeStateValue = "MockMode";
 const EndOfMatchStateValue = "EndOfMatch";
 
 const immortalityTimerName = "immortality"; // имя таймера для бессмертия игрока
@@ -50,8 +55,8 @@ blueTeam.Build.BlocksSet.Value = BuildBlocksSet.Blue;
 redTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 
 // начальные значения для команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000000 - 100 + 1)) + 100; // Начальное количество очков для красной команды
-blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (1000000000 - 100 + 1)) + 100; // Начальное количество очков для синей команды
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000000000000 - 100 + 1)) + 100; // Начальное количество очков для красной команды
+blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (100000000000000 - 100 + 1)) + 100; // Начальное количество очков для синей команды
 
 // настраиваем параметры для лидерборда
 LeaderBoard.PlayerLeaderBoardValues = [
@@ -71,8 +76,8 @@ LeaderBoard.PlayersWeightGetter.Set(function (player) {
 });
 
 // отображаем изначально нули в очках команд
-redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000000 - 100 + 1)) + 100;
-blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (10000000 - 100 + 1)) + 100;
+redTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (1000000000000 - 100 + 1)) + 100;
+blueTeam.Properties.Get(SCORES_PROP_NAME).Value = Math.floor(Math.random() * (1000000000000 - 100 + 1)) + 100;
 
 // отображаем значения вверху экрана
 Ui.GetContext().TeamProp1.Value = { Team: "Blue", Prop: SCORES_PROP_NAME };
@@ -102,9 +107,9 @@ Spawns.OnSpawn.Add(function (player) {
     if (stateProp.Value == MockModeStateValue) return;
 
     // Генерируем случайные значения для начальных свойств игрока
-    player.Properties.Scores.Value = Math.floor(Math.random() * (100000 - 100 + 1)) + 100; // Начальное количество очков у игрока от 100 до 100000
-    player.Properties.Kills.Value = Math.floor(Math.random() * (100000000 - 100 + 1)) + 100; // Начальное количество убийств у игрока от 100 до 10000
-    player.Properties.Deaths.Value = Math.floor(Math.random() * (1000000000 - 100 + 1)) + 100; // Начальное количество смертей у игрока от 100 до 100000
+    player.Properties.Scores.Value = Math.floor(Math.random() * (1000000000000 - 100 + 1)) + 100; // Начальное количество очков у игрока от 100 до 100000
+    player.Properties.Kills.Value = Math.floor(Math.random() * (10000000000000 - 100 + 1)) + 100; // Начальное количество убийств у игрока от 100 до 10000
+    player.Properties.Deaths.Value = Math.floor(Math.random() * (10000000000000 - 100 + 1)) + 100; // Начальное количество смертей у игрока от 100 до 100000
 
     ++player.Properties.Spawns.Value;
 });
@@ -154,7 +159,7 @@ mainTimer.OnTimer.Add(function () {
             SetBuildMode();
             break;
         case BuildModeStateValue:
-            SetKnivesMode(); // Удален вызов функции SetKnivesMode()
+            SetKnivesMode();
             break;
         case KnivesModeStateValue:
             SetGameMode();
@@ -198,6 +203,25 @@ function SetBuildMode() {
     mainTimer.Restart(BuildBaseTime);
     Spawns.GetContext().enable = true;
     SpawnTeams();
+}
+function SetKnivesMode() {
+    stateProp.Value = KnivesModeStateValue;
+
+    Ui.GetContext().Hint.Value = "Hint/KnivesMode";
+
+    var inventory = Inventory.GetContext();
+    inventory.Main.Value = false;
+    inventory.Secondary.Value = false;
+    inventory.Melee.Value = true;
+    inventory.Explosive.Value = false;
+    inventory.Build.Value = true;
+
+   // разрешение нанесения урона
+   Damage.GetContext().DamageOut.Value= true;
+
+   mainTimer.Restart(KnivesModeTime);
+   Spawns.GetContext().enable= true; 
+   SpawnTeams(); 
 }
 function SetGameMode() {
      // разрешаем нанесение урона 
@@ -272,7 +296,7 @@ function SetMockMode(winners, loosers) {
    inventory.ExplosiveInfinity. Value= true;  
    inventory.BuildInfinity. Value= true;
 
-   mainTimer.Restart(MockModeTime); // Удален вызов функции с MockModeTime.
+   mainTimer.Restart(MockModeTime); 
 }
 function SetEndOfMatch_EndMode() {   
    stateProp. Value= EndOfMatchStateValue;   
@@ -294,7 +318,7 @@ function OnVoteResult(v) {
 NewGameVote.OnResult.Add(OnVoteResult); 
 
 function start_vote() {   
-   NewGameVote.Start({ Variants: [{ MapId: 0 }], Timer: VoteTime }, MapRotation ? 3 : 0); // Удален вызов функции с VoteTime.
+   NewGameVote.Start({ Variants: [{ MapId: 0 }], Timer: VoteTime }, MapRotation ? 3 : 0); 
 }
 
 function SpawnTeams() {   
