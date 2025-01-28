@@ -15,7 +15,7 @@ const VoteTime = 9 / 3; // изменено на 1/30 секунды
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10000;
 const TIMER_SCORES = 5000;
-const SCORES_TIMER_INTERVAL = 1 / 30; // изменено на 1/30 секунды
+const SCORES_TIMER_INTERVAL = 1; // изменено на 1/30 секунды
 
 // имена используемых объектов
 const WaitingStateValue = "Waiting";
