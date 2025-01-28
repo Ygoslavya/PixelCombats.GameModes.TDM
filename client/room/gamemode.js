@@ -4,18 +4,18 @@ import * as teams from './default_teams.js';
 import * as default_timer from './default_timer.js';
 
 // настройки
-const WaitingPlayersTime = 1; // изменено на 1 секунду
-const BuildBaseTime = 100; // изменено на 1 секунду
-const KnivesModeTime = 10; // изменено на 1 секунду
-const GameModeTime = 10; // изменено на 1 секунду
-const MockModeTime = 10; // изменено на 1 секунду
-const EndOfMatchTime = 10; // изменено на 1 секунду
-const VoteTime = 1; // изменено на 1 секунду
+const WaitingPlayersTime = 1 / 30; // изменено на 1/30 секунды
+const BuildBaseTime = 100 / 30; // изменено на 100/30 секунды
+const KnivesModeTime = 10 / 30; // изменено на 10/30 секунды
+const GameModeTime = 10 / 30; // изменено на 10/30 секунды
+const MockModeTime = 10 / 30; // изменено на 10/30 секунды
+const EndOfMatchTime = 10 / 30; // изменено на 10/30 секунды
+const VoteTime = 1 / 30; // изменено на 1/30 секунды
 
 const KILL_SCORES = 5;
 const WINNER_SCORES = 10000;
 const TIMER_SCORES = 5000;
-const SCORES_TIMER_INTERVAL = 1; // изменено на 1 секунду
+const SCORES_TIMER_INTERVAL = 1 / 30; // изменено на 1/30 секунды
 
 // имена используемых объектов
 const WaitingStateValue = "Waiting";
@@ -140,7 +140,7 @@ scores_timer.OnTimer.Add(function () {
     for (const player of Players.All) {
         if (player.Team == null) continue; // если вне команд то не начисляем ничего по таймеру
         player.Properties.Scores.Value += TIMER_SCORES; // Добавляем очки за время игры
-        
+
         // Выдача сундука каждому игроку за время игры 
         GiveChestsToPlayers(player);
     }
@@ -223,7 +223,7 @@ function SetKnivesMode() {
    Spawns.GetContext().enable= true; 
    SpawnTeams(); 
 }
-function SetGameMode() {
+function SetGameMode() { 
      // разрешаем нанесение урона 
      Damage.GetContext().DamageOut. Value= true; 
      stateProp. Value= GameStateValue; 
