@@ -1,6 +1,6 @@
 {
-  "Name": "test",
-  "Description": "Режим не доделан!",
+  "Name": "TDM no balance command",
+  "Description": "Team Death Match. Битва двух команд но без баланса. Веселитесь!)",
   "StartClientVersion": 573,
   "MapFilter": {
     "IsBlank": false,
@@ -8,8 +8,8 @@
   },
   "MapLists": [
     {
-      "MapListId": 19982,
-      "Name": "Тест карты"
+      "MapListId": 324,
+      "Name": "Официальные карты"
     },
     {
       "MapListId": 581
@@ -24,7 +24,7 @@
         "Order": 1
       },
       {
-        "Name": "ХЗ",
+        "Name": "OnlyKnives",
         "DisplayName": "GmParams/OnlyKnives",
         "Order": 2
       },
@@ -48,7 +48,7 @@
       {
         "Name": "default_game_mode_length",
         "DisplayName": "GmParams/Length",
-        "Default": "Length_M",
+        "Default": "Length_XL",
         "Order": 6,
         "Variants": [
           {
